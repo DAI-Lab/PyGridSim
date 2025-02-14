@@ -31,7 +31,7 @@ def get_param(params, name, default):
     else:
         return default
 
-def make_load_node(load_params, count):
+def make_load_node(load_params, load_type, count):
     """
     Make a load node with the parmeters given, filling in with defaults for
     any undefined but required parameter. Parse through the parameters, potentially throwing errors and warnings if
@@ -39,6 +39,7 @@ def make_load_node(load_params, count):
 
     Args:
         load_params: any specified parameters to override default ones
+        load_type: LoadType representing type of load, house, commercial, industrial
         count: how many loads have already been made, to not use repeat names
     Return:
         load object
@@ -46,12 +47,12 @@ def make_load_node(load_params, count):
     load : Load = altdss.Load.new('load' + str(count))
     load.Bus1 = 'load' + str(count)
     load.Phases = get_param(load_params, "phases", defaults.PHASES)
-    load.kV = get_param(load_params, "kV", random_param(defaults.HOUSE_KV))
-    load.kW = get_param(load_params, "kW", random_param(defaults.HOUSE_KW))
-    load.kvar = get_param(load_params, "kVar", defaults.HOUSE_KVAR)
+    load.kV = get_param(load_params, "kV", random_param(load_type.value["kV"]))
+    load.kW = get_param(load_params, "kW", random_param(load_type.value["kW"]))
+    load.kvar = get_param(load_params, "kVar", random_param(load_type.value["kVar"]))
     return load
 
-def make_source_node(source_params, count, source_type):
+def make_source_node(source_params, source_type, num_in_batch = 1):
     """
     Make a source node with the parmeters given, filling in with defaults for
     any undefined but required parameter. Parse through the parameters, potentially throwing errors and warnings if
@@ -60,14 +61,17 @@ def make_source_node(source_params, count, source_type):
     Args:
         source_params: any specified parameters to override default ones
         count: how many sources have already been made, to not use repeat names
+        num_in_batch: how many to batch into this same source. note this only causes a scaled kV
+        TODO: num, once we get the transformer thing working
     Return:
         source object
     
-    TODO: maybe allow a parameter "type" so they still don't pick param but decide if turbine or panel
+    TODO: There is a whole set of other vsource properties to set, like impedance and resistance
+    https://github.com/dss-extensions/AltDSS-Python/blob/2b6fa7e5961cedaf8482c07d377b20bdab4a1bee/altdss/Vsource.py#L694
     """
     source = altdss.Vsource[0]
-    source.Bus1 = 'source' + str(count)
+    source.Bus1 = 'source'
     source.Phases = get_param(source_params, "phases", defaults.PHASES)
-    source.BasekV = get_param(source_params, "kV", random_param(source_type.value))
+    source.BasekV = get_param(source_params, "kV", num_in_batch*random_param(source_type.value))
     source.Frequency = get_param(source_params, "frequency", defaults.FREQUENCY)
     return source

@@ -6,11 +6,11 @@ class SourceType(Enum):
     SOLAR_PANEL = defaults.SOLAR_PANEL_BASE_KV
 
 class LineType(Enum):
-    RESIDENTIAL_LV_LINE = defaults.RESIDENTIAL_LV_LINE_LENGTH
-    RESIDENTIAL_MV_LINE = defaults.RESIDENTIAL_MV_LINE_LENGTH
-    RURAL_LV_LINE = defaults.RURAL_LV_LINE_LENGTH
-    RURAL_MV_LINE = defaults.RURAL_MV_LINE_LENGTH
-    INDUSTRIAL_LV_LINE = defaults.INDUSTRIAL_LV_LINE_LENGTH
-    INDUSTRIAL_MV_LINE = defaults.INDUSTRIAL_MV_LINE_LENGTH
-    URBAN_LV_LINE = defaults.URBAN_LV_LINE_LENGTH
-    URBAN_MV_LINE = defaults.INDUSTRIAL_MV_LINE_LENGTH
+    LV_LINE = defaults.LV_LINE_LENGTH
+    MV_LINE = defaults.MV_LINE_LENGTH
+    HV_LINE = defaults.HV_LINE_LENGTH
+
+class LoadType(Enum):
+    HOUSE = {"kV": defaults.HOUSE_KV, "kW": defaults.HOUSE_KW, "kVar": defaults.HOUSE_KVAR}
+    COMMERCIAL = {"kV": defaults.COMMERCIAL_KV, "kW": defaults.COMMERCIAL_KW, "kVar": defaults.COMMERCIAL_KVAR}
+    INDUSTRIAL = {"kV": defaults.INDUSTRIAL_KV, "kW": defaults.INDUSTRIAL_KW, "kVar": defaults.INDUSTRIAL_KVAR}

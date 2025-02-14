@@ -29,29 +29,33 @@ FREQUENCY = 60
 
 """
 Load Nodes
+kW: around 30 kWH a day, divide by 24 hours
+kVar is like around 0.2 or 0.1 of what kVar is 
 """
-HOUSE_KV = [120, 240]
-HOUSE_KW = [1, 1.4]
-HOUSE_KVAR = 0.6 # unclear
+HOUSE_KV = [.12, .24]
+HOUSE_KW = [1, 1.5]
+HOUSE_KVAR = [0.5, 1] # unclear
+
+COMMERCIAL_KV = [.24, .48]
+COMMERCIAL_KW = [10, 50]
+COMMERCIAL_KVAR = [5, 10]
+
+INDUSTRIAL_KV = [.24, .48]
+INDUSTRIAL_KW = [30, 100]
+INDUSTRIAL_KVAR = [20, 25]
 
 """
 Source Nodes
 TODO also fuel cells, other less common forms of energy later
 """
 
-TURBINE_BASE_KV = [0.55,0.7]
-SOLAR_PANEL_BASE_KV = [0.0005, 0.0006] # per solar panel
+TURBINE_BASE_KV = [3000,4000]
+SOLAR_PANEL_BASE_KV = [0.2, 0.4] # per solar panel
 
 """
 Units: KM
 LV = Low Voltage, MV = Medium Voltage
-Based on IEEE standards
 """
-RESIDENTIAL_LV_LINE_LENGTH = [0.05, 0.3]
-RESIDENTIAL_MV_LINE_LENGTH = [1, 10]
-RURAL_LV_LINE_LENGTH = [0.1 ,0.5]
-RURAL_MV_LINE_LENGTH = [10, 50]
-INDUSTRIAL_LV_LINE_LENGTH = [0.01, 0.2]
-INDUSTRIAL_MV_LINE_LENGTH = [1,5]
-URBAN_LV_LINE_LENGTH = [0.02, 0.2]
-URBAN_MV_LINE_LENGTH = [1,10]
+LV_LINE_LENGTH = [30, 60]
+MV_LINE_LENGTH = [60, 160]
+HV_LINE_LENGTH = [160,300]

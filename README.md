@@ -23,7 +23,7 @@ NOTE: will be moved to Dai lab repository
 
 # Overview
 
-TODO: Provide a short overview of the project here.
+PyGridSim aims to provide accessible access to tools like OpenDSS, AltDSS using Python. The goal is to create large-scale electrical circuits representing residential neighborhoods (and other scenarios) using an intuitive interface, without any background in OpenDSS software.
 
 # Install
 
@@ -88,7 +88,7 @@ for more details about this process.
 In this short tutorial we will guide you through a series of steps that will help you
 getting started with **PyGridSim**.
 
-TODO: Create a step by step guide here.
+TODO: Create a step by step guide here. Also figure out how to ensure prerequisites properly.
 
 # What's next?
 

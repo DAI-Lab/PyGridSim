@@ -20,9 +20,3 @@ def make_line(src, dst, line_type, count, params = {}):
     line.Bus1 = src
     line.Bus2 = dst
     line.Units = LineUnits.km
-
-"""
-TODO:
-- make_line is the most natural place to add transformers
-- could define parser as a helper of make line (i.e. make line takes in the numbers, not nodes)
-"""
