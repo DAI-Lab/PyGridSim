@@ -2,7 +2,9 @@
 from altdss import altdss
 from altdss import AltDSS, Transformer, Vsource, Load, LoadModel, LoadShape
 from dss.enums import LineUnits, SolveModes
-
+"""
+this is from colab stuff, delete later
+"""
 
 altdss('new circuit.IEEE13Nodeckt')
 

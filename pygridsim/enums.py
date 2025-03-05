@@ -1,5 +1,5 @@
 from enum import Enum
-import defaults
+import pygridsim.defaults as defaults
 
 class SourceType(Enum):
     TURBINE = defaults.TURBINE_BASE_KV

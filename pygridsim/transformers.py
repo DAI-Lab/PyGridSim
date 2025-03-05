@@ -1,28 +1,28 @@
 from altdss import altdss
 from altdss import Transformer, Connection
-import defaults
-from parameters import random_param, get_param
+import pygridsim.defaults as defaults
+from pygridsim.parameters import get_param, random_param
 
 def make_transformer(src, dst, count, params):
     """
     Add a Transformer between src and dst
 
     Args:
-        src: where line starts (source node) TODO: just 1 for now
+        src: where line starts (source node)
         dst: where line end (load node)
-        count: nnumber of transformers so far
-        params (optional): any non-default parameters to use TODO
+        count: number of transformers so far
+        params (optional): any non-default parameters to use.
     Returns:
         Transformer object that was created
+
+    TODO:
+    - used some of this logic in the line code, if we keep it there then delete this file
     """
-    # taken from altdss python package
     transformer: Transformer = altdss.Transformer.new('transformer' + str(count))
-    transformer.Phases = 3
-    transformer.Windings = 2
-    transformer.XHL = 8 / 1000
+    transformer.Phases = defaults.PHASES
+    transformer.Windings = defaults.NUM_WINDINGS
+    transformer.XHL = get_param(params, "XHL", defaults.XHL) 
     transformer.Buses = [src, dst]
-    transformer.Conns = [Connection.delta, Connection.wye]
+    transformer.Conns = get_param(params, "Conns", [defaults.PRIMARY_CONN, defaults.SECONDARY_CONN])
     transformer.kVs = [altdss.Vsource[src].BasekV, altdss.Load[dst].kV] 
-    #transformer.kVAs = [5000, 5000]
-    #transformer.pctRs = [0.5 / 1000, 0.5 / 1000]
     transformer.end_edit()

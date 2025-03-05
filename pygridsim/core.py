@@ -2,11 +2,11 @@
 from altdss import altdss
 from altdss import AltDSS, Transformer, Vsource, Load, LoadModel, LoadShape
 from dss.enums import LineUnits, SolveModes
-from parameters import make_load_node, make_source_node
-from queries import query_solution
-from lines import make_line
-from transformers import make_transformer
-from enums import LineType, SourceType, LoadType
+from pygridsim.parameters import make_load_node, make_source_node
+from pygridsim.results import query_solution
+from pygridsim.lines import make_line
+from pygridsim.transformers import make_transformer
+from pygridsim.enums import LineType, SourceType, LoadType
 
 """Main module."""
 
@@ -16,16 +16,19 @@ class PyGridSim:
 		Initialize OpenDSS/AltDSS engine. Creates an Empty Circuit
 		"""
 		self.num_loads = 0
+		self.num_sources = 0
 		self.num_lines = 0
 		self.num_transformers = 0
-		altdss('new circuit.IEEE13Nodeckt')
+		altdss.ClearAll()
+		#altdss('new circuit.IEEE13Nodeckt')
+		altdss('new circuit.MyCircuit')
 	
-	def add_load_nodes(self, load_params = {}, load_type: LoadType = LoadType.HOUSE, num = 1):
+	def add_load_nodes(self, params = {}, load_type: LoadType = LoadType.HOUSE, num = 1):
 		"""
 		When the user wants to manually add nodes, or make nodes with varying parameters.
 
 		Args: 
-			load_params: load parameters for these manual additions
+			params: load parameters for these manual additions
 			lines: which nodes these new loads are connected to
 			num (optional): number of loads to create with these parameters
 		Return:
@@ -33,16 +36,16 @@ class PyGridSim:
 		"""
 		load_nodes = []
 		for i in range(num):
-			make_load_node(load_params, load_type, self.num_loads)
+			make_load_node(params, load_type, self.num_loads)
 			self.num_loads += 1
 		return load_nodes
 
-	def add_source_nodes(self, source_params = {}, source_type: SourceType = SourceType.TURBINE, num_in_batch = 1):
+	def add_source_nodes(self, params = {}, source_type: SourceType = SourceType.TURBINE, num_in_batch = 1, num=1):
 		"""
 		When the user wants to manually add nodes, or make nodes with varying parameters.
 
 		Args:
-			source_params: load parameters for these manual additions
+			params: load parameters for these manual additions
 			lines: which nodes these new sources are connected to
 			num (optional): number of sources to create with these parameters (removed for now)
 			num_in_batch: how many to batch together directly (so they can't be connected to lines separately, etc.
@@ -50,9 +53,13 @@ class PyGridSim:
 		Return:
 			List of source_nodes
 		"""
-		return make_source_node(source_params, source_type, num_in_batch=num_in_batch)
+		source_nodes = []
+		for i in range(num):
+			make_source_node(params, source_type, count=self.num_sources, num_in_batch=num_in_batch)
+			self.num_sources += 1
+		return source_nodes
 
-	def add_lines(self, connections, line_type: LineType = LineType.LV_LINE, params = {}):
+	def add_lines(self, connections, line_type: LineType = LineType.LV_LINE, params = {}, transformer = True):
 		"""
 		Specify all lines that the user wants to add. If redundant lines, doesn't add anything
 
@@ -61,7 +68,7 @@ class PyGridSim:
 			TODO: allow the input to also contain optional parameters
 		"""
 		for src, dst in connections:
-			make_line(src, dst, line_type, self.num_lines, params)
+			make_line(src, dst, line_type, self.num_lines, params, transformer)
 			self.num_lines += 1
 
 	def add_transformers(self, connections, params = {}):
@@ -70,6 +77,7 @@ class PyGridSim:
 
 		Args:
 			connections: a list of new transformers to add (where to add them), with these params
+		TODO: remove
 		"""
 		for src, dst in connections:
 			make_transformer(src, dst, self.num_transformers, params)
@@ -118,6 +126,8 @@ class PyGridSim:
 	def solve(self):
 		"""
 		Initialize "solve" mode in AltDSS, then allowing the user to query various results on the circuit
+
+		TODO: error handling here
 		"""
 		altdss.Solution.Solve()
 	
@@ -132,27 +142,15 @@ class PyGridSim:
 		for query in queries:
 			results[query] = query_solution(query)
 		return results
-
-	def remove_load_nodes(self, indices):
-		"""
-		All load nodes are defined by indices, so remove the ones in list of indices.
-
-		Args:
-			indices: indices corresponding to nodes to remove (i.e. [1,3] removes the 1st and 3rd load nodes)
-		"""
-
-	def remove_source_nodes(self, indices):
-		"""
-		All source nodes are defined by indices, so remove the ones in list of indices
 	
-		Args:
-			indices: indices corresponding to nodes to remove
+	def clear(self):
 		"""
+		Must call after we are done using the circuit, or will cause re-creation errors.
 
-	def remove_lines(self, connections):
+		We only work with one circuit at a time, can only have one PyGridSim object at a time.
+		TODO: maybe this isn't necessary because it's done in the beginning
 		"""
-		Remove all the connections (and any corresponding transformers) specified.
-
-		Args:
-			connections: a list of connections to remove
-		"""
+		altdss.ClearAll()
+		self.num_loads = 0
+		self.num_lines = 0
+		self.num_transformers = 0

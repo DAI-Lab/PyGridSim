@@ -19,7 +19,8 @@ In the second iteration
 For now, many of them are listed as tuples - lower end, higher end.
 TODO: make generate function that does Math.rand for in the range (later: improve distribution to be non-uniform)
 """
-
+from altdss import altdss
+from altdss import Connection
 """
 Overall Defaults, used for load, sources, lines, etc.
 https://www.anker.com/blogs/home-power-backup/electricity-usage-how-much-energy-does-an-average-house-use
@@ -58,4 +59,12 @@ LV = Low Voltage, MV = Medium Voltage
 """
 LV_LINE_LENGTH = [30, 60]
 MV_LINE_LENGTH = [60, 160]
-HV_LINE_LENGTH = [160,300]
+HV_LINE_LENGTH = [160, 300]
+
+"""
+Transformers
+"""
+NUM_WINDINGS = 2
+XHL = 2
+PRIMARY_CONN = Connection.delta
+SECONDARY_CONN = Connection.wye

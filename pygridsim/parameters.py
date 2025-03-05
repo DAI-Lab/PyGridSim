@@ -3,7 +3,7 @@ Helper functions to parse the parameters used for loads and sources
 """
 from altdss import altdss
 from altdss import AltDSS, Transformer, Vsource, Load, LoadModel, LoadShape
-import defaults
+import pygridsim.defaults as defaults
 import random
 
 def random_param(range):
@@ -50,9 +50,10 @@ def make_load_node(load_params, load_type, count):
     load.kV = get_param(load_params, "kV", random_param(load_type.value["kV"]))
     load.kW = get_param(load_params, "kW", random_param(load_type.value["kW"]))
     load.kvar = get_param(load_params, "kVar", random_param(load_type.value["kVar"]))
+    load.Daily = 'default'
     return load
 
-def make_source_node(source_params, source_type, num_in_batch = 1):
+def make_source_node(source_params, source_type, count, num_in_batch = 1):
     """
     Make a source node with the parmeters given, filling in with defaults for
     any undefined but required parameter. Parse through the parameters, potentially throwing errors and warnings if
@@ -70,6 +71,8 @@ def make_source_node(source_params, source_type, num_in_batch = 1):
     https://github.com/dss-extensions/AltDSS-Python/blob/2b6fa7e5961cedaf8482c07d377b20bdab4a1bee/altdss/Vsource.py#L694
     """
     source = altdss.Vsource[0]
+    #source = altdss.Vsource['source' + str(count)]
+    #source: Vsource = altdss.Vsource.new('source' + str(count))
     source.Bus1 = 'source'
     source.Phases = get_param(source_params, "phases", defaults.PHASES)
     source.BasekV = get_param(source_params, "kV", num_in_batch*random_param(source_type.value))

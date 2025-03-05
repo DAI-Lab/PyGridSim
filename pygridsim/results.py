@@ -15,7 +15,7 @@ def query_solution(query):
         Query result or the string "Invalid" if the query is not supported
     """
     match query:
-        case "BusVMag":
+        case "Voltages":
             bus_vmags = {}
             for bus_name, bus_vmag in zip(altdss.BusNames(), altdss.BusVMag()):
                 bus_vmags[bus_name] = float(bus_vmag)
