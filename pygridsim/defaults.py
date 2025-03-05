@@ -68,3 +68,10 @@ NUM_WINDINGS = 2
 XHL = 2
 PRIMARY_CONN = Connection.delta
 SECONDARY_CONN = Connection.wye
+
+"""
+Valid parameter lists
+"""
+VALID_LOAD_PARAMS = ["kV", "kW", "kVar", "phases"]
+VALID_SOURCE_PARAMS = ["kV", "phases", "frequency"]
+VALID_LINE_TRANSFORMER_PARAMS = ["length", "XHL", "Conns"]

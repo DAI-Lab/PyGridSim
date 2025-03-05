@@ -31,6 +31,12 @@ def get_param(params, name, default):
     else:
         return default
 
+def check_valid_params(params, valid_params):
+    # Invalid parameter handling
+    for param in params:
+        if param not in valid_params:
+            raise KeyError(f"Parameter {param} is not supported")
+
 def make_load_node(load_params, load_type, count):
     """
     Make a load node with the parmeters given, filling in with defaults for
@@ -44,6 +50,8 @@ def make_load_node(load_params, load_type, count):
     Return:
         load object
     """
+    check_valid_params(load_params, defaults.VALID_LOAD_PARAMS)
+
     load : Load = altdss.Load.new('load' + str(count))
     load.Bus1 = 'load' + str(count)
     load.Phases = get_param(load_params, "phases", defaults.PHASES)
@@ -51,6 +59,9 @@ def make_load_node(load_params, load_type, count):
     load.kW = get_param(load_params, "kW", random_param(load_type.value["kW"]))
     load.kvar = get_param(load_params, "kVar", random_param(load_type.value["kVar"]))
     load.Daily = 'default'
+
+    if (load.kV) < 0:
+        raise ValueError("Cannot have negative voltage in load")
     return load
 
 def make_source_node(source_params, source_type, count, num_in_batch = 1):
@@ -70,11 +81,15 @@ def make_source_node(source_params, source_type, count, num_in_batch = 1):
     TODO: There is a whole set of other vsource properties to set, like impedance and resistance
     https://github.com/dss-extensions/AltDSS-Python/blob/2b6fa7e5961cedaf8482c07d377b20bdab4a1bee/altdss/Vsource.py#L694
     """
+    check_valid_params(source_params, defaults.VALID_SOURCE_PARAMS)
+
     source = altdss.Vsource[0]
-    #source = altdss.Vsource['source' + str(count)]
-    #source: Vsource = altdss.Vsource.new('source' + str(count))
     source.Bus1 = 'source'
     source.Phases = get_param(source_params, "phases", defaults.PHASES)
     source.BasekV = get_param(source_params, "kV", num_in_batch*random_param(source_type.value))
     source.Frequency = get_param(source_params, "frequency", defaults.FREQUENCY)
+
+    if (source.BasekV) < 0:
+        raise ValueError("Cannot have negative voltage in source")
+
     return source
