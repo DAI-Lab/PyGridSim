@@ -95,15 +95,15 @@ publish: dist ## package and upload a release
 	twine upload dist/*
 
 .PHONY: bumpversion-release
-bumpversion-release: ## Merge master to stable and bumpversion release
+bumpversion-release: ## Merge main to stable and bumpversion release
 	git checkout stable
-	git merge --no-ff master -m"make release-tag: Merge branch 'master' into stable"
+	git merge --no-ff main -m"make release-tag: Merge branch 'main' into stable"
 	bumpversion release
 	git push --tags origin stable
 
 .PHONY: bumpversion-patch
-bumpversion-patch: ## Merge stable to master and bumpversion patch
-	git checkout master
+bumpversion-patch: ## Merge stable to main and bumpversion patch
+	git checkout main
 	git merge stable
 	bumpversion --no-tag patch
 	git push
@@ -123,10 +123,10 @@ bumpversion-candidate: ## Bump the version to the next candidate
 CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null)
 CHANGELOG_LINES := $(shell git diff HEAD..origin/stable HISTORY.md 2>&1 | wc -l)
 
-.PHONY: check-master
-check-master: ## Check if we are in master branch
-ifneq ($(CURRENT_BRANCH),master)
-	$(error Please make the release from master branch\n)
+.PHONY: check-main
+check-main: ## Check if we are in main branch
+ifneq ($(CURRENT_BRANCH),main)
+	$(error Please make the release from main branch\n)
 endif
 
 .PHONY: check-history
@@ -136,13 +136,13 @@ ifeq ($(CHANGELOG_LINES),0)
 endif
 
 .PHONY: check-release
-check-release: check-master check-history ## Check if the release can be made
+check-release: check-main check-history ## Check if the release can be made
 
 .PHONY: release
 release: check-release bumpversion-release publish bumpversion-patch
 
 .PHONY: release-candidate
-release-candidate: check-master publish bumpversion-candidate
+release-candidate: check-main publish bumpversion-candidate
 
 .PHONY: release-minor
 release-minor: check-release bumpversion-minor release
