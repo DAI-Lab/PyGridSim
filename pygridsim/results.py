@@ -3,13 +3,14 @@ Defines the set of allowed queries (i.e. baseKV at every node) and
 provides helpers for the solve/results function.
 """
 from altdss import altdss
+import json
 
 def query_solution(query):
     """
     Given a query, return the query result or indicate it is invalid
 
     Args:
-        queries: a list of queriies for the solve function
+        query: a query for the solve function
         TODO: only BusVMag, Losses, TotalPower is supported, need to make accessible which queries are supported
     Return:
         Query result or the string "Invalid" if the query is not supported
@@ -32,3 +33,6 @@ def query_solution(query):
         case _:
             return "Invalid"
 
+def export_results(results, path):
+    with open(path, "w") as json_file:
+        json.dump(results, json_file, indent=4)

@@ -3,7 +3,7 @@ from altdss import altdss
 from altdss import AltDSS, Transformer, Vsource, Load, LoadModel, LoadShape
 from dss.enums import LineUnits, SolveModes
 from pygridsim.parameters import make_load_node, make_source_node
-from pygridsim.results import query_solution
+from pygridsim.results import query_solution, export_results
 from pygridsim.lines import make_line
 from pygridsim.transformers import make_transformer
 from pygridsim.enums import LineType, SourceType, LoadType
@@ -130,7 +130,7 @@ class PyGridSim:
 		"""
 		altdss.Solution.Solve()
 	
-	def results(self, queries):
+	def results(self, queries, export_path = ""):
 		"""
 		Allow the user to query for many results at once instead of learning how to manually query
 
@@ -140,6 +140,8 @@ class PyGridSim:
 		results = {}
 		for query in queries:
 			results[query] = query_solution(query)
+		if (export_path):
+			export_results(results, export_path)
 		return results
 	
 	def clear(self):
