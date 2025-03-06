@@ -20,7 +20,6 @@ class PyGridSim:
 		self.num_lines = 0
 		self.num_transformers = 0
 		altdss.ClearAll()
-		#altdss('new circuit.IEEE13Nodeckt')
 		altdss('new circuit.MyCircuit')
 	
 	def add_load_nodes(self, params = {}, load_type: LoadType = LoadType.HOUSE, num = 1):
