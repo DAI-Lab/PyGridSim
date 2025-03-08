@@ -15,6 +15,11 @@ source1.BasekV = 0.6
 source1.Phases = 3
 source1.Frequency = 60
 
+gen = altdss.Generator
+gen.Bus1 = 'genSource'
+gen.kV = 10
+gen.Phases = 3
+
 # create load
 load1 : Load = altdss.Load.new('load1')
 load1.Bus1 = 'LoadBus'
