@@ -36,5 +36,9 @@ def make_line(src, dst, line_type, count, params = {}, transformer = True):
     transformer.XHL = get_param(params, "XHL", defaults.XHL) 
     transformer.Buses = [src, dst]
     transformer.Conns = get_param(params, "Conns", [defaults.PRIMARY_CONN, defaults.SECONDARY_CONN])
-    transformer.kVs = [altdss.Vsource[src].BasekV, altdss.Load[dst].kV] 
+    # TOOD: edit this for clarity
+    if src == "source":
+        transformer.kVs = [altdss.Vsource[src].BasekV, altdss.Load[dst].kV] 
+    else:
+        transformer.kVs = [altdss.Generator[src].kV, altdss.Load[dst].kV] 
     transformer.end_edit()

@@ -2,7 +2,7 @@
 Helper functions to parse the parameters used for loads and sources
 """
 from altdss import altdss
-from altdss import AltDSS, Transformer, Vsource, Load, LoadModel, LoadShape, PVSystem
+from altdss import AltDSS, Transformer, Vsource, Load, PVSystem, Generator
 import pygridsim.defaults as defaults
 import random
 
@@ -100,8 +100,30 @@ def make_pv(load_node, params, num_panels, count):
         num_panels: representation of how many solar panels this PVsystem includes
         count: how many pv already made, to not run into duplicates
     """
+    check_valid_params(params, defaults.VALID_PV_PARAMS)
     pv : PVSystem = altdss.PVSystem.new('pv' + str(count))
     pv.Bus1 = load_node
     pv.Phases = get_param(params, "phases", defaults.PHASES)
     pv.kV = get_param(params, "kV", random_param(defaults.SOLAR_PANEL_BASE_KV) * num_panels)
     # todo: inverter capacity?
+    if (pv.kV) < 0:
+        raise ValueError("Cannot have negative voltage for PVsystem")
+
+def make_generator(params, gen_type, count):
+    """
+    Make a PV at the load node given, scaling kV by the number of solar panels
+
+    Args:
+        params: any customized parameters
+        gen_type: type of generator (small, large, industrial)
+        count: how many generators already made, to not run into duplicates
+    """
+    check_valid_params(params, defaults.VALID_GENERATOR_PARAMS)
+    generator : Generator = altdss.Generator.new('generator' + str(count))
+    generator.Bus1 = 'generator' + str(count)
+    generator.Phases = get_param(params, "phases", defaults.PHASES)
+    for attr in ["kV", "kW"]:
+        setattr(generator, attr, get_param(params, attr, random_param(gen_type.value[attr])))
+
+    if (generator.kV) < 0:
+        raise ValueError("Cannot have negative voltage in generatorsource")

@@ -53,6 +53,15 @@ TURBINE_BASE_KV = [3000,4000]
 SOLAR_PANEL_BASE_KV = [0.2, 0.4] # per solar panel
 IMPEDANCE = 0.0001
 
+"""
+Generator default values (small, large, industrial)
+"""
+SMALL_GEN_KV = [0.2, 0.6]
+LARGE_GEN_KV = [1, 35]
+INDUSTRIAL_GEN_KV = [35, 100]
+SMALL_GEN_KW = [2,5]
+LARGE_GEN_KW = [5,10]
+INDUSTRIAL_GEN_KW = [10,20]
 
 """
 Units: KM
@@ -76,3 +85,5 @@ Valid parameter lists
 VALID_LOAD_PARAMS = ["kV", "kW", "kvar", "phases"]
 VALID_SOURCE_PARAMS = ["kV", "phases", "frequency", "R0", "R1", "X0", "X1"]
 VALID_LINE_TRANSFORMER_PARAMS = ["length", "XHL", "Conns"]
+VALID_PV_PARAMS = ["kV", "phases"]
+VALID_GENERATOR_PARAMS = ["kV", "kW", "phases"]

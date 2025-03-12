@@ -2,11 +2,11 @@
 from altdss import altdss
 from altdss import AltDSS, Transformer, Vsource, Load, LoadModel, LoadShape
 from dss.enums import LineUnits, SolveModes
-from pygridsim.parameters import make_load_node, make_source_node, make_pv
+from pygridsim.parameters import *
 from pygridsim.results import query_solution, export_results
 from pygridsim.lines import make_line
 from pygridsim.transformers import make_transformer
-from pygridsim.enums import LineType, SourceType, LoadType
+from pygridsim.enums import LineType, SourceType, LoadType, GeneratorType
 
 """Main module."""
 
@@ -19,6 +19,7 @@ class PyGridSim:
 		self.num_lines = 0
 		self.num_transformers = 0
 		self.num_pv = 0
+		self.num_generators = 0
 		altdss.ClearAll()
 		altdss('new circuit.MyCircuit')
 	
@@ -34,7 +35,7 @@ class PyGridSim:
 			List of load_nodes
 		"""
 		load_nodes = []
-		for i in range(num):
+		for _ in range(num):
 			make_load_node(params, load_type, self.num_loads)
 			self.num_loads += 1
 		return load_nodes
@@ -54,7 +55,7 @@ class PyGridSim:
 		"""
 		return make_source_node(params, source_type)
 
-	def add_PVSystem(self, load_nodes = [], params = {}, num_panels = 1):
+	def add_PVSystem(self, load_nodes, params = {}, num_panels = 1):
 		"""
 		Specify a list of load nodes to add a PVsystem ("solar panel") to.
 
@@ -65,22 +66,30 @@ class PyGridSim:
 		Return:
 			list of PVSystem objects
 		"""
+		if not load_nodes:
+			raise ValueError("Need to enter load nodes to add PVSystem to")
 		PV_nodes = []
 		for load in load_nodes:
 			PV_nodes.append(make_pv(load, params, num_panels, self.num_pv))
 			self.num_pv += 1
 		return PV_nodes
 	
-	def add_generator(self, params = {}):
+	def add_generator(self, num, params = {}, gen_type: GeneratorType = GeneratorType.SMALL):
 		"""
 		Specify parameters for a generator to add to the circuit
 
 		Args:
-			params: specify anything else about the PVsystem. otherwise defaults to typical solar panel
-			num: representing how many solar panels (to represent scale)
+			num: number of generators
+			gen_type: specify the generator type (small, large, industrial)
+			params: specify anything else about the generator.
 		Return:
-			list of PVSystem objects
+			list of generator objects
 		"""
+		generators = []
+		for _ in range(num):
+			generators.append(make_generator(params, gen_type, count=self.num_generators))
+			self.num_generators += 1
+		return generators
 	
 
 	def add_lines(self, connections, line_type: LineType = LineType.LV_LINE, params = {}, transformer = True):

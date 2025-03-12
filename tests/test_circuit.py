@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from pygridsim.core import PyGridSim
-from pygridsim.enums import LineType, SourceType, LoadType
+from pygridsim.enums import *
 from altdss import altdss
 from altdss import Connection
 
@@ -117,6 +117,15 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
 
+    def test_009_generator(self):
+        circuit = PyGridSim()
+        circuit.update_source()
+        circuit.add_load_nodes()
+        circuit.add_generator(num=1, gen_type=GeneratorType.SMALL)
+        circuit.add_lines([("source", "load0"), ("generator0", "load0")])
+        circuit.solve()
+        print(circuit.results(["Voltages", "Losses"]))
+
 
 class TestCustomizedCircuit(unittest.TestCase):
     """
@@ -160,6 +169,14 @@ class TestCustomizedCircuit(unittest.TestCase):
         circuit = PyGridSim()
         with self.assertRaises(KeyError):
             circuit.update_source(params={"kV": 50, "badParam": 100})
+        with self.assertRaises(KeyError):
+            circuit.add_load_nodes(num=4, params={"badParam": 100})
+        # add load nodes so we can test pv system erroring
+        circuit.add_load_nodes(num=2, params={"kV": 10, "kW": 20, "kvar":1})
+        with self.assertRaises(KeyError):
+            circuit.add_generator(num=4, params={"badParam": 100})
+        with self.assertRaises(KeyError):
+            circuit.add_PVSystem(load_nodes=["load0"], params={"badParam": 100}, num_panels=4)
 
     def test_102_negative_inputs(self):
         """
