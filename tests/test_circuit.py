@@ -107,6 +107,15 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit.add_lines([("source", "load0")])
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"], export_path="sim.json"))
+    
+    def test_008_PVsystem(self):
+        circuit = PyGridSim()
+        circuit.update_source()
+        circuit.add_load_nodes(num=2)
+        circuit.add_PVSystem(load_nodes=["load0", "load1"], num_panels=5)
+        circuit.add_lines([("source", "load0")])
+        circuit.solve()
+        print(circuit.results(["Voltages", "Losses"]))
 
 
 class TestCustomizedCircuit(unittest.TestCase):

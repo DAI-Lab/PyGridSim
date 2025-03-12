@@ -2,7 +2,7 @@
 from altdss import altdss
 from altdss import AltDSS, Transformer, Vsource, Load, LoadModel, LoadShape
 from dss.enums import LineUnits, SolveModes
-from pygridsim.parameters import make_load_node, make_source_node
+from pygridsim.parameters import make_load_node, make_source_node, make_pv
 from pygridsim.results import query_solution, export_results
 from pygridsim.lines import make_line
 from pygridsim.transformers import make_transformer
@@ -18,6 +18,7 @@ class PyGridSim:
 		self.num_loads = 0
 		self.num_lines = 0
 		self.num_transformers = 0
+		self.num_pv = 0
 		altdss.ClearAll()
 		altdss('new circuit.MyCircuit')
 	
@@ -53,10 +54,34 @@ class PyGridSim:
 		"""
 		return make_source_node(params, source_type)
 
-	def add_power_source(self, source_type: SourceType):
+	def add_PVSystem(self, load_nodes = [], params = {}, num_panels = 1):
 		"""
-		Source type is one of Generator, PvSystem
+		Specify a list of load nodes to add a PVsystem ("solar panel") to.
+
+		Args:
+		    load_nodes: which load nodes to add PVsystem to
+			params: specify anything else about the PVsystem. otherwise defaults to typical solar panel
+			num_panels: representing how many solar panels (to represent scale)
+		Return:
+			list of PVSystem objects
 		"""
+		PV_nodes = []
+		for load in load_nodes:
+			PV_nodes.append(make_pv(load, params, num_panels, self.num_pv))
+			self.num_pv += 1
+		return PV_nodes
+	
+	def add_generator(self, params = {}):
+		"""
+		Specify parameters for a generator to add to the circuit
+
+		Args:
+			params: specify anything else about the PVsystem. otherwise defaults to typical solar panel
+			num: representing how many solar panels (to represent scale)
+		Return:
+			list of PVSystem objects
+		"""
+	
 
 	def add_lines(self, connections, line_type: LineType = LineType.LV_LINE, params = {}, transformer = True):
 		"""

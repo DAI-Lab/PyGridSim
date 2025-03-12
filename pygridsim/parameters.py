@@ -2,7 +2,7 @@
 Helper functions to parse the parameters used for loads and sources
 """
 from altdss import altdss
-from altdss import AltDSS, Transformer, Vsource, Load, LoadModel, LoadShape
+from altdss import AltDSS, Transformer, Vsource, Load, LoadModel, LoadShape, PVSystem
 import pygridsim.defaults as defaults
 import random
 
@@ -89,3 +89,19 @@ def make_source_node(source_params, source_type):
         raise ValueError("Cannot have negative voltage in source")
 
     return source
+
+def make_pv(load_node, params, num_panels, count):
+    """
+    Make a PV at the load node given, scaling kV by the number of solar panels
+
+    Args:
+        load_node: which load to add PVsystem to
+        params: any customized parameters
+        num_panels: representation of how many solar panels this PVsystem includes
+        count: how many pv already made, to not run into duplicates
+    """
+    pv : PVSystem = altdss.PVSystem.new('pv' + str(count))
+    pv.Bus1 = load_node
+    pv.Phases = get_param(params, "phases", defaults.PHASES)
+    pv.kV = get_param(params, "kV", random_param(defaults.SOLAR_PANEL_BASE_KV) * num_panels)
+    # todo: inverter capacity?

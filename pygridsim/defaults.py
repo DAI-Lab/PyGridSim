@@ -46,13 +46,13 @@ INDUSTRIAL_KW = [30, 100]
 INDUSTRIAL_KVAR = [20, 25]
 
 """
-Source Nodes
-TODO also fuel cells, other less common forms of energy later
+Source Nodes (including other form of sources, like PVSystem)
 """
 
 TURBINE_BASE_KV = [3000,4000]
 SOLAR_PANEL_BASE_KV = [0.2, 0.4] # per solar panel
 IMPEDANCE = 0.0001
+
 
 """
 Units: KM
