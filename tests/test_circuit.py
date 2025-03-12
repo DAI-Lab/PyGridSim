@@ -30,7 +30,7 @@ class TestDefaultRangeCircuit(unittest.TestCase):
 
     def test_000_basic(self):
         circuit = PyGridSim()
-        circuit.add_source_nodes()
+        circuit.update_source()
         circuit.add_load_nodes()
         circuit.add_lines([("source", "load0")])
         circuit.solve()
@@ -39,7 +39,7 @@ class TestDefaultRangeCircuit(unittest.TestCase):
 
     def test_001_one_source_one_load(self):
         circuit = PyGridSim()
-        circuit.add_source_nodes(source_type=SourceType.TURBINE)
+        circuit.update_source(source_type=SourceType.TURBINE)
         circuit.add_load_nodes(num=1, load_type=LoadType.HOUSE)
         circuit.add_lines([("source", "load0")], LineType.MV_LINE)
         #circuit.add_transformers([("source", "load0")], params={"Conns": [Connection.wye, Connection.delta]})
@@ -52,7 +52,7 @@ class TestDefaultRangeCircuit(unittest.TestCase):
     def test_002_one_source_one_load_no_transformer(self):
         # doesn't throw error, but should have stranger output VMag
         circuit = PyGridSim()
-        circuit.add_source_nodes(source_type=SourceType.TURBINE)
+        circuit.update_source(source_type=SourceType.TURBINE)
         circuit.add_load_nodes(num=1, load_type=LoadType.HOUSE)
         circuit.add_lines([("source", "load0")], LineType.MV_LINE, transformer=False)
         circuit.solve()
@@ -64,7 +64,7 @@ class TestDefaultRangeCircuit(unittest.TestCase):
             for source_type in SourceType:
                 for load_type in LoadType:
                     circuit = PyGridSim()
-                    circuit.add_source_nodes(source_type=source_type)
+                    circuit.update_source(source_type=source_type)
                     circuit.add_load_nodes(num=1, load_type=load_type)
                     circuit.add_lines([("source", "load0")], line_type)
                     circuit.solve()
@@ -75,7 +75,7 @@ class TestDefaultRangeCircuit(unittest.TestCase):
 
     def test_004_one_source_multi_load(self):
         circuit = PyGridSim()
-        circuit.add_source_nodes(num_in_batch=10, source_type=SourceType.SOLAR_PANEL)
+        circuit.update_source(source_type=SourceType.SOLAR_PANEL)
         circuit.add_load_nodes(num=4, load_type=LoadType.HOUSE)
         circuit.add_lines([("source", "load0"), ("source", "load3")], LineType.HV_LINE)
         circuit.solve()
@@ -84,23 +84,25 @@ class TestDefaultRangeCircuit(unittest.TestCase):
     
     def test_005_bad_query(self):
         circuit = PyGridSim()
-        circuit.add_source_nodes()
+        circuit.update_source()
         circuit.add_load_nodes()
         circuit.add_lines([("source", "load0")])
         circuit.solve()
         print(circuit.results(["BadQuery"]))
 
-    def test_006_multi_source_bad(self):
+    def test_006_update_multiple_source(self):
         circuit = PyGridSim()
-        #circuit.add_source_nodes(num_in_batch=10, num=2, source_type=SourceType.SOLAR_PANEL)
-        #circuit.add_load_nodes(num=1, load_type=LoadType.HOUSE)
-        #circuit.add_lines([("source", "load0")], LineType.HV_LINE)
-        #circuit.solve()
+        circuit.update_source(source_type=SourceType.SOLAR_PANEL)
+        circuit.add_load_nodes(num=1, load_type=LoadType.HOUSE)
+        circuit.update_source(source_type=SourceType.SOLAR_PANEL)
+        circuit.add_lines([("source", "load0")], LineType.HV_LINE)
+        circuit.solve()
+        print(circuit.results(["Voltages"]))
         # TODO: can add assert to make sure it's in reasonable range?
     
     def test_007_export(self):
         circuit = PyGridSim()
-        circuit.add_source_nodes()
+        circuit.update_source()
         circuit.add_load_nodes()
         circuit.add_lines([("source", "load0")])
         circuit.solve()
@@ -123,8 +125,8 @@ class TestCustomizedCircuit(unittest.TestCase):
 
     def test_100_one_source_one_load(self):
         circuit = PyGridSim()
-        circuit.add_source_nodes(params={"kV": 100})
-        circuit.add_load_nodes(num=1, params={"kV": 10, "kW": 20, "kVar":1})
+        circuit.update_source(params={"kV": 100, "R0": 0.1, "R1": 0.2, "X0": 0.3, "X1": 0.4})
+        circuit.add_load_nodes(num=1, params={"kV": 10, "kW": 20, "kvar":1})
         circuit.add_lines([("source", "load0")], params={"length": 20})
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
@@ -135,8 +137,8 @@ class TestCustomizedCircuit(unittest.TestCase):
         Creates 10 loads, some of which are connected to source. all loads and lines here have the same params
         """
         circuit = PyGridSim()
-        circuit.add_source_nodes(params={"kV": 100})
-        circuit.add_load_nodes(num=10, params={"kV": 10, "kW": 20, "kVar":1})
+        circuit.update_source(params={"kV": 100})
+        circuit.add_load_nodes(num=10, params={"kV": 10, "kW": 20, "kvar":1})
         circuit.add_lines([("source", "load0"), ("source", "load4"), ("source", "load6")], params={"length": 20})
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
@@ -148,7 +150,7 @@ class TestCustomizedCircuit(unittest.TestCase):
         """
         circuit = PyGridSim()
         with self.assertRaises(KeyError):
-            circuit.add_source_nodes(params={"kV": 50, "badParam": 100})
+            circuit.update_source(params={"kV": 50, "badParam": 100})
 
     def test_102_negative_inputs(self):
         """
@@ -161,7 +163,7 @@ class TestCustomizedCircuit(unittest.TestCase):
             circuit.add_load_nodes(params={"kV": -1})
         
         with self.assertRaises(ValueError):
-            circuit.add_source_nodes(params={"kV": -1})
+            circuit.update_source(params={"kV": -1})
         
         # properly add load and source, then create invalid line
         with self.assertRaises(ValueError):
@@ -170,7 +172,7 @@ class TestCustomizedCircuit(unittest.TestCase):
     def test_103_invalid_nodes_in_line(self):
         circuit = PyGridSim()
         circuit.add_load_nodes()
-        circuit.add_source_nodes()
+        circuit.update_source()
         with self.assertRaises(ValueError):
             # only has source, load0 for now but tries to add another one
             circuit.add_lines([("source", "load5")])

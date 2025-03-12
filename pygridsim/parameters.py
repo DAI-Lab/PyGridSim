@@ -55,39 +55,35 @@ def make_load_node(load_params, load_type, count):
     load : Load = altdss.Load.new('load' + str(count))
     load.Bus1 = 'load' + str(count)
     load.Phases = get_param(load_params, "phases", defaults.PHASES)
-    load.kV = get_param(load_params, "kV", random_param(load_type.value["kV"]))
-    load.kW = get_param(load_params, "kW", random_param(load_type.value["kW"]))
-    load.kvar = get_param(load_params, "kVar", random_param(load_type.value["kVar"]))
+    for attr in ["kV", "kW", "kvar"]:
+        setattr(load, attr, get_param(load_params, attr, random_param(load_type.value[attr])))
     load.Daily = 'default'
 
     if (load.kV) < 0:
         raise ValueError("Cannot have negative voltage in load")
     return load
 
-def make_source_node(source_params, source_type, count, num_in_batch = 1):
+def make_source_node(source_params, source_type):
     """
     Make a source node with the parmeters given, filling in with defaults for
     any undefined but required parameter. Parse through the parameters, potentially throwing errors and warnings if
-    one of the parameter names is invalid.
+    one of the parameter names is invalid. Note that this updates the source node if one already exists
 
     Args:
         source_params: any specified parameters to override default ones
-        count: how many sources have already been made, to not use repeat names
-        num_in_batch: how many to batch into this same source. note this only causes a scaled kV
-        TODO: num, once we get the transformer thing working
     Return:
         source object
-    
-    TODO: There is a whole set of other vsource properties to set, like impedance and resistance
-    https://github.com/dss-extensions/AltDSS-Python/blob/2b6fa7e5961cedaf8482c07d377b20bdab4a1bee/altdss/Vsource.py#L694
     """
     check_valid_params(source_params, defaults.VALID_SOURCE_PARAMS)
 
     source = altdss.Vsource[0]
     source.Bus1 = 'source'
     source.Phases = get_param(source_params, "phases", defaults.PHASES)
-    source.BasekV = get_param(source_params, "kV", num_in_batch*random_param(source_type.value))
+    source.BasekV = get_param(source_params, "kV", random_param(source_type.value))
     source.Frequency = get_param(source_params, "frequency", defaults.FREQUENCY)
+
+    for imp in ["R0", "R1", "X0", "X1"]:
+        setattr(source, imp, get_param(source_params, imp, defaults.IMPEDANCE))
 
     if (source.BasekV) < 0:
         raise ValueError("Cannot have negative voltage in source")

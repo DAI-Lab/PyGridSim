@@ -16,7 +16,6 @@ class PyGridSim:
 		Initialize OpenDSS/AltDSS engine. Creates an Empty Circuit
 		"""
 		self.num_loads = 0
-		self.num_sources = 0
 		self.num_lines = 0
 		self.num_transformers = 0
 		altdss.ClearAll()
@@ -39,24 +38,25 @@ class PyGridSim:
 			self.num_loads += 1
 		return load_nodes
 
-	def add_source_nodes(self, params = {}, source_type: SourceType = SourceType.TURBINE, num_in_batch = 1, num=1):
+	def update_source(self, params = {}, source_type: SourceType = SourceType.TURBINE):
 		"""
-		When the user wants to manually add nodes, or make nodes with varying parameters.
+		Adds a main voltage source if it doesn't exist, otherwise edits it
 
 		Args:
 			params: load parameters for these manual additions
 			lines: which nodes these new sources are connected to
 			num (optional): number of sources to create with these parameters (removed for now)
-			num_in_batch: how many to batch together directly (so they can't be connected to lines separately, etc.
+			(removed) num_in_batch: how many to batch together directly (so they can't be connected to lines separately, etc.
 				most common use case is if a house has 20 solar panels it's more useful to group them together)
 		Return:
 			List of source_nodes
 		"""
-		source_nodes = []
-		for i in range(num):
-			make_source_node(params, source_type, count=self.num_sources, num_in_batch=num_in_batch)
-			self.num_sources += 1
-		return source_nodes
+		return make_source_node(params, source_type)
+
+	def add_power_source(self, source_type: SourceType):
+		"""
+		Source type is one of Generator, PvSystem
+		"""
 
 	def add_lines(self, connections, line_type: LineType = LineType.LV_LINE, params = {}, transformer = True):
 		"""
