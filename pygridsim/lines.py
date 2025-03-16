@@ -1,7 +1,9 @@
 from altdss import altdss
 from altdss import Transformer, Connection
+from pygridsim.configs import *
 import pygridsim.defaults as defaults
-from pygridsim.parameters import get_param, random_param, check_valid_params
+from pygridsim.enums import LineType
+from pygridsim.parameters import get_param, random_param, check_valid_params, get_enum_obj
 from dss.enums import LineUnits
 
 def make_line(src, dst, line_type, count, params = {}, transformer = True):
@@ -16,9 +18,10 @@ def make_line(src, dst, line_type, count, params = {}, transformer = True):
         Line object that was created
     """
     check_valid_params(params, defaults.VALID_LINE_TRANSFORMER_PARAMS)
+    line_type_obj = get_enum_obj(LineType, line_type)
     line = altdss.Line.new('line' + str(count))
     line.Phases = defaults.PHASES
-    line.Length = get_param(params, "length", random_param(line_type.value)) 
+    line.Length = get_param(params, "length", random_param(LINE_CONFIGURATIONS[line_type_obj]["length"])) 
     line.Bus1 = src
     line.Bus2 = dst
     line.Units = LineUnits.km

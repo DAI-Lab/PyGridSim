@@ -39,9 +39,9 @@ class TestDefaultRangeCircuit(unittest.TestCase):
 
     def test_001_one_source_one_load(self):
         circuit = PyGridSim()
-        circuit.update_source(source_type=SourceType.TURBINE)
-        circuit.add_load_nodes(num=1, load_type=LoadType.HOUSE)
-        circuit.add_lines([("source", "load0")], LineType.MV_LINE)
+        circuit.update_source(source_type="turbine")
+        circuit.add_load_nodes(num=1, load_type="house")
+        circuit.add_lines([("source", "load0")], "MV")
         #circuit.add_transformers([("source", "load0")], params={"Conns": [Connection.wye, Connection.delta]})
         print("Load Nodes:", circuit.view_load_nodes())
         print("Source Nodes:", circuit.view_source_node())
@@ -52,9 +52,9 @@ class TestDefaultRangeCircuit(unittest.TestCase):
     def test_002_one_source_one_load_no_transformer(self):
         # doesn't throw error, but should have stranger output VMag
         circuit = PyGridSim()
-        circuit.update_source(source_type=SourceType.TURBINE)
-        circuit.add_load_nodes(num=1, load_type=LoadType.HOUSE)
-        circuit.add_lines([("source", "load0")], LineType.MV_LINE, transformer=False)
+        circuit.update_source(source_type="turbine")
+        circuit.add_load_nodes(num=1, load_type="house")
+        circuit.add_lines([("source", "load0")],"MV", transformer=False)
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
         circuit.clear()
@@ -64,9 +64,9 @@ class TestDefaultRangeCircuit(unittest.TestCase):
             for source_type in SourceType:
                 for load_type in LoadType:
                     circuit = PyGridSim()
-                    circuit.update_source(source_type=source_type)
-                    circuit.add_load_nodes(num=1, load_type=load_type)
-                    circuit.add_lines([("source", "load0")], line_type)
+                    circuit.update_source(source_type=source_type.value)
+                    circuit.add_load_nodes(num=1, load_type=load_type.value)
+                    circuit.add_lines([("source", "load0")], line_type.value)
                     circuit.solve()
                     print("LineType:", line_type, "SourceType", source_type, "LoadType", load_type)
                     print(circuit.results(["Voltages", "Losses"]))
@@ -75,9 +75,9 @@ class TestDefaultRangeCircuit(unittest.TestCase):
 
     def test_004_one_source_multi_load(self):
         circuit = PyGridSim()
-        circuit.update_source(source_type=SourceType.SOLAR_PANEL)
-        circuit.add_load_nodes(num=4, load_type=LoadType.HOUSE)
-        circuit.add_lines([("source", "load0"), ("source", "load3")], LineType.HV_LINE)
+        circuit.update_source(source_type="turbine")
+        circuit.add_load_nodes(num=4, load_type="house")
+        circuit.add_lines([("source", "load0"), ("source", "load3")], "HV")
         circuit.solve()
         print(circuit.results(["Voltages"]))
         circuit.clear()
@@ -92,10 +92,10 @@ class TestDefaultRangeCircuit(unittest.TestCase):
 
     def test_006_update_multiple_source(self):
         circuit = PyGridSim()
-        circuit.update_source(source_type=SourceType.SOLAR_PANEL)
-        circuit.add_load_nodes(num=1, load_type=LoadType.HOUSE)
-        circuit.update_source(source_type=SourceType.SOLAR_PANEL)
-        circuit.add_lines([("source", "load0")], LineType.HV_LINE)
+        circuit.update_source(source_type="turbine")
+        circuit.add_load_nodes(num=1, load_type="house")
+        circuit.update_source(source_type="turbine")
+        circuit.add_lines([("source", "load0")], "HV")
         circuit.solve()
         print(circuit.results(["Voltages"]))
         # TODO: can add assert to make sure it's in reasonable range?
@@ -121,10 +121,46 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit = PyGridSim()
         circuit.update_source()
         circuit.add_load_nodes()
-        circuit.add_generator(num=1, gen_type=GeneratorType.SMALL)
+        circuit.add_generator(num=3, gen_type="small")
         circuit.add_lines([("source", "load0"), ("generator0", "load0")])
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
+    
+    def test_010_configs(self):
+        circuit = PyGridSim()
+
+        # LOAD CONFIG
+        # should work, because not case sensitive
+        circuit.add_load_nodes(num=2, load_type="HOUSE")
+        circuit.add_load_nodes(num=2, load_type="hoUSE")
+        # should fail, invalid load_type value
+        with self.assertRaises(KeyError):
+            circuit.add_load_nodes(num=2, load_type="badloadtype")
+        # don't want loadtype input, just string
+        with self.assertRaises(Exception):
+            circuit.add_load_nodes(num=2, load_type=LoadType.HOUSE)
+        
+        # LINE CONFIG
+        # works, because not case sensitive
+        circuit.add_lines([("source", "load0")], line_type="HV")
+        # don't want linetype input, just string
+        with self.assertRaises(Exception):
+            circuit.add_lines([("source", "load0")], line_type=LineType.HV_LINE)
+
+        # GENERATOR CONFIG
+        # works, because not case sensitive
+        circuit.add_generator(num=3, gen_type="SMALl")
+        # don't want linetype input, just string
+        with self.assertRaises(Exception):
+            circuit.add_generator(num=3, gen_type=GeneratorType.SMALL)
+
+        # SOURCE CONFIG
+        # works, because not case sensitive
+        circuit.update_source(source_type="turBINE")
+        # don't want linetype input, just string
+        with self.assertRaises(Exception):
+            circuit.update_source(source_type=SourceType.TURBINE)
+
 
 
 class TestCustomizedCircuit(unittest.TestCase):

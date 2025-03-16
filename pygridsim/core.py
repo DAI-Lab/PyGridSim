@@ -5,7 +5,6 @@ from dss.enums import LineUnits, SolveModes
 from pygridsim.parameters import *
 from pygridsim.results import query_solution, export_results
 from pygridsim.lines import make_line
-from pygridsim.transformers import make_transformer
 from pygridsim.enums import LineType, SourceType, LoadType, GeneratorType
 
 """Main module."""
@@ -23,12 +22,13 @@ class PyGridSim:
 		altdss.ClearAll()
 		altdss('new circuit.MyCircuit')
 	
-	def add_load_nodes(self, params = {}, load_type: LoadType = LoadType.HOUSE, num = 1):
+	def add_load_nodes(self, params = {}, load_type: str = "house", num = 1):
 		"""
 		When the user wants to manually add nodes, or make nodes with varying parameters.
 
 		Args: 
 			params: load parameters for these manual additions
+			load_type: input as string, representing one of the load types
 			lines: which nodes these new loads are connected to
 			num (optional): number of loads to create with these parameters
 		Return:
@@ -40,13 +40,13 @@ class PyGridSim:
 			self.num_loads += 1
 		return load_nodes
 
-	def update_source(self, params = {}, source_type: SourceType = SourceType.TURBINE):
+	def update_source(self, params = {}, source_type: str = "turbine"):
 		"""
 		Adds a main voltage source if it doesn't exist, otherwise edits it
 
 		Args:
 			params: load parameters for these manual additions
-			lines: which nodes these new sources are connected to
+			source_type: source type as a string
 			num (optional): number of sources to create with these parameters (removed for now)
 			(removed) num_in_batch: how many to batch together directly (so they can't be connected to lines separately, etc.
 				most common use case is if a house has 20 solar panels it's more useful to group them together)
@@ -92,13 +92,13 @@ class PyGridSim:
 		return generators
 	
 
-	def add_lines(self, connections, line_type: LineType = LineType.LV_LINE, params = {}, transformer = True):
+	def add_lines(self, connections, line_type: str = "lv", params = {}, transformer = True):
 		"""
 		Specify all lines that the user wants to add. If redundant lines, doesn't add anything
 
 		Args:
 			connections: a list of new connections to add. Each item of the list follows the form (source1, load1)
-			TODO: allow the input to also contain optional parameters
+			line_type: a string representing linetype if user wants to use preset parameters
 		"""
 		for src, dst in connections:
 			make_line(src, dst, line_type, self.num_lines, params, transformer)
