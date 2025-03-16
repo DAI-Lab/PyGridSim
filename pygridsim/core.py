@@ -104,19 +104,6 @@ class PyGridSim:
 			make_line(src, dst, line_type, self.num_lines, params, transformer)
 			self.num_lines += 1
 
-	def add_transformers(self, connections, params = {}):
-		"""
-		Specify all transformers that the user wants to add, same input style as lines.
-
-		Args:
-			connections: a list of new transformers to add (where to add them), with these params
-		TODO: remove
-		"""
-		for src, dst in connections:
-			make_transformer(src, dst, self.num_transformers, params)
-			self.num_transformers += 1
-
-
 	def view_load_nodes(self, indices = []):
 		"""
 		View load nodes (what their parameters are) at the given indices.
