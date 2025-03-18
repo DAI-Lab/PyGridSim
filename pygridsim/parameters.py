@@ -45,9 +45,11 @@ def get_param(params, name, default):
 
 def check_valid_params(params, valid_params):
     # Invalid parameter handling
-    for param in params:
-        if param not in valid_params:
-            raise KeyError(f"Parameter {param} is not supported")
+    for key in params:
+        if key not in valid_params:
+            raise KeyError(f"Parameter {key} is not supported")
+        if key in ["kV", "BasekV"] and params[key] < 0:
+            raise ValueError("KV cannot be less than 0")
 
 def make_load_node(load_params, load_type, count):
     """
@@ -73,8 +75,6 @@ def make_load_node(load_params, load_type, count):
         setattr(load, attr, get_param(load_params, attr, random_param(load_type_param)))
     load.Daily = 'default'
 
-    if (load.kV) < 0:
-        raise ValueError("Cannot have negative voltage in load")
     return load
 
 def make_source_node(source_params, source_type):
@@ -101,9 +101,6 @@ def make_source_node(source_params, source_type):
     for imp in ["R0", "R1", "X0", "X1"]:
         setattr(source, imp, get_param(source_params, imp, defaults.IMPEDANCE))
 
-    if (source.BasekV) < 0:
-        raise ValueError("Cannot have negative voltage in source")
-
     return source
 
 def make_pv(load_node, params, num_panels, count):
@@ -122,8 +119,6 @@ def make_pv(load_node, params, num_panels, count):
     pv.Phases = get_param(params, "phases", defaults.PHASES)
     pv.kV = get_param(params, "kV", random_param(defaults.SOLAR_PANEL_BASE_KV) * num_panels)
     # todo: inverter capacity?
-    if (pv.kV) < 0:
-        raise ValueError("Cannot have negative voltage for PVsystem")
 
 def make_generator(params, gen_type, count):
     """
@@ -143,6 +138,3 @@ def make_generator(params, gen_type, count):
     for attr in ["kV", "kW"]:
         gen_type_param = GENERATOR_CONFIGURATIONS[gen_type_obj][attr]
         setattr(generator, attr, get_param(params, attr, random_param(gen_type_param)))
-
-    if (generator.kV) < 0:
-        raise ValueError("Cannot have negative voltage in generatorsource")
