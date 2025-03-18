@@ -11,7 +11,7 @@ import random
 def get_enum_obj(enum_class, enum_val):
     enum_obj = None
     for enum_type in enum_class:
-        if (enum_type.value == enum_val.lower()):
+        if (enum_type.value == enum_val.lower().replace(" ", "")):
             enum_obj = enum_type
     if not enum_obj:
         raise KeyError("invalid enum input")

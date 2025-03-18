@@ -22,7 +22,7 @@ class PyGridSim:
 		altdss.ClearAll()
 		altdss('new circuit.MyCircuit')
 	
-	def add_load_nodes(self, params = {}, load_type: str = "house", num = 1):
+	def add_load_nodes(self, load_type: str = "house", params = {}, num = 1):
 		"""
 		When the user wants to manually add nodes, or make nodes with varying parameters.
 
@@ -40,7 +40,7 @@ class PyGridSim:
 			self.num_loads += 1
 		return load_nodes
 
-	def update_source(self, params = {}, source_type: str = "turbine"):
+	def update_source(self, source_type: str = "turbine", params = {}):
 		"""
 		Adds a main voltage source if it doesn't exist, otherwise edits it
 
@@ -74,7 +74,7 @@ class PyGridSim:
 			self.num_pv += 1
 		return PV_nodes
 	
-	def add_generator(self, num, params = {}, gen_type: GeneratorType = GeneratorType.SMALL):
+	def add_generator(self, num, gen_type: GeneratorType = GeneratorType.SMALL, params = {}):
 		"""
 		Specify parameters for a generator to add to the circuit
 

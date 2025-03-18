@@ -6,6 +6,19 @@ from pygridsim.enums import LineType
 from pygridsim.parameters import get_param, random_param, check_valid_params, get_enum_obj
 from dss.enums import LineUnits
 
+def get_kv(node_name):
+    """
+    Given a string of a node that exists, fetch its kV or raise error if doesn't exist
+    """
+    if node_name == "source":
+        return altdss.Vsource[node_name].BasekV
+    elif "load" in node_name:
+        return altdss.Load[node_name].kV
+    elif "generator" in node_name:
+        return altdss.Generator[node_name].kV
+    else:
+        raise KeyError("Invalid src or dst name")
+
 def make_line(src, dst, line_type, count, params = {}, transformer = True):
     """
     Add a line between src and dst
@@ -39,9 +52,7 @@ def make_line(src, dst, line_type, count, params = {}, transformer = True):
     transformer.XHL = get_param(params, "XHL", defaults.XHL) 
     transformer.Buses = [src, dst]
     transformer.Conns = get_param(params, "Conns", [defaults.PRIMARY_CONN, defaults.SECONDARY_CONN])
-    # TOOD: edit this for clarity
-    if src == "source":
-        transformer.kVs = [altdss.Vsource[src].BasekV, altdss.Load[dst].kV] 
-    else:
-        transformer.kVs = [altdss.Generator[src].kV, altdss.Load[dst].kV] 
+
+    transformer.kVs = [get_kv(src), get_kv(dst)]
+
     transformer.end_edit()

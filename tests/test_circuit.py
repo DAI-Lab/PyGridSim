@@ -126,7 +126,19 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
     
-    def test_010_configs(self):
+    def test_010_many_sources(self):
+        circuit = PyGridSim()
+        circuit.update_source(source_type="powerplant")
+        circuit.add_load_nodes(num=3)
+        circuit.add_PVSystem(load_nodes=["load1", "load2"], num_panels=10)
+        circuit.add_generator(num=3, gen_type="small")
+        circuit.update_source(source_type="turbine") # change to a turbine source midway
+        circuit.add_generator(num=4, gen_type="large")
+        circuit.add_lines([("source", "load0"), ("generator0", "load0"), ("generator5", "source")])
+        circuit.solve()
+        print(circuit.results(["Voltages", "Losses"]))
+
+    def test_011_configs(self):
         circuit = PyGridSim()
 
         # LOAD CONFIG
@@ -157,10 +169,11 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         # SOURCE CONFIG
         # works, because not case sensitive
         circuit.update_source(source_type="turBINE")
+        # source type as first param, ignores spaces, this should also work
+        circuit.update_source("power plant")
         # don't want linetype input, just string
         with self.assertRaises(Exception):
             circuit.update_source(source_type=SourceType.TURBINE)
-
 
 
 class TestCustomizedCircuit(unittest.TestCase):
