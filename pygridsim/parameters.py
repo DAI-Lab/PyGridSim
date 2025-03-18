@@ -48,6 +48,8 @@ def check_valid_params(params, valid_params):
     for key in params:
         if key not in valid_params:
             raise KeyError(f"Parameter {key} is not supported")
+        if not isinstance(params[key], (int, float)):
+            raise TypeError("Parameter input should be int or float")
         if key in ["kV", "BasekV"] and params[key] < 0:
             raise ValueError("KV cannot be less than 0")
 

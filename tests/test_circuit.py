@@ -68,8 +68,8 @@ class TestDefaultRangeCircuit(unittest.TestCase):
                     circuit.add_load_nodes(num=1, load_type=load_type.value)
                     circuit.add_lines([("source", "load0")], line_type.value)
                     circuit.solve()
-                    print("LineType:", line_type, "SourceType", source_type, "LoadType", load_type)
-                    print(circuit.results(["Voltages", "Losses"]))
+                    #print("LineType:", line_type, "SourceType", source_type, "LoadType", load_type)
+                    #print(circuit.results(["Voltages", "Losses"]))
                     circuit.clear()
 
 
@@ -251,6 +251,11 @@ class TestCustomizedCircuit(unittest.TestCase):
         with self.assertRaises(ValueError):
             # only has source, load0 for now but tries to add another one
             circuit.add_lines([("source", "load5")])
+    
+    def test_104_non_int_parameters(self):
+        circuit = PyGridSim()
+        with self.assertRaises(TypeError):
+            circuit.add_load_nodes(params={"kV": "stringInput"})
 
 
 class TestLargeCircuit(unittest.TestCase):
