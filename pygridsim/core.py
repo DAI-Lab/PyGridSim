@@ -22,7 +22,7 @@ class PyGridSim:
 		altdss.ClearAll()
 		altdss('new circuit.MyCircuit')
 	
-	def add_load_nodes(self, load_type: str = "house", params = {}, num = 1):
+	def add_load_nodes(self, load_type: str = "house", params = {}, num: int = 1):
 		"""
 		When the user wants to manually add nodes, or make nodes with varying parameters.
 
@@ -55,7 +55,7 @@ class PyGridSim:
 		"""
 		return make_source_node(params, source_type)
 
-	def add_PVSystem(self, load_nodes, params = {}, num_panels = 1):
+	def add_PVSystem(self, load_nodes: list[str], params = {}, num_panels: int = 1):
 		"""
 		Specify a list of load nodes to add a PVsystem ("solar panel") to.
 
@@ -74,7 +74,7 @@ class PyGridSim:
 			self.num_pv += 1
 		return PV_nodes
 	
-	def add_generator(self, num, gen_type: GeneratorType = GeneratorType.SMALL, params = {}):
+	def add_generator(self, num: int = 1, gen_type: GeneratorType = GeneratorType.SMALL, params = {}):
 		"""
 		Specify parameters for a generator to add to the circuit
 
@@ -92,7 +92,7 @@ class PyGridSim:
 		return generators
 	
 
-	def add_lines(self, connections, line_type: str = "lv", params = {}, transformer = True):
+	def add_lines(self, connections: list[tuple], line_type: str = "lv", params = {}, transformer: bool = True):
 		"""
 		Specify all lines that the user wants to add. If redundant lines, doesn't add anything
 
@@ -104,7 +104,7 @@ class PyGridSim:
 			make_line(src, dst, line_type, self.num_lines, params, transformer)
 			self.num_lines += 1
 
-	def view_load_nodes(self, indices = []):
+	def view_load_nodes(self, indices: list = []):
 		"""
 		View load nodes (what their parameters are) at the given indices.
 
@@ -151,7 +151,7 @@ class PyGridSim:
 		"""
 		altdss.Solution.Solve()
 	
-	def results(self, queries, export_path = ""):
+	def results(self, queries: list[str], export_path = ""):
 		"""
 		Allow the user to query for many results at once instead of learning how to manually query
 
