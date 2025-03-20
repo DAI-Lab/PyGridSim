@@ -11,7 +11,6 @@ def query_solution(query):
 
     Args:
         query: a query for the solve function
-        TODO: only BusVMag, Losses, TotalPower is supported, need to make accessible which queries are supported
     Return:
         Query result or the string "Invalid" if the query is not supported
     """

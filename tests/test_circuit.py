@@ -98,7 +98,6 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit.add_lines([("source", "load0")], "HV")
         circuit.solve()
         print(circuit.results(["Voltages"]))
-        # TODO: can add assert to make sure it's in reasonable range?
     
     def test_007_export(self):
         circuit = PyGridSim()

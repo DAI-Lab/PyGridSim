@@ -27,7 +27,6 @@ def random_param(range):
         [lower_bound, upper_bound]; range of typical value
     Return:
         Randomly selected value in range
-    TODO: allow for non-uniform distributions
     """
     if type(range) is not list:
         return range
@@ -120,7 +119,6 @@ def make_pv(load_node, params, num_panels, count):
     pv.Bus1 = load_node
     pv.Phases = get_param(params, "phases", defaults.PHASES)
     pv.kV = get_param(params, "kV", random_param(defaults.SOLAR_PANEL_BASE_KV) * num_panels)
-    # todo: inverter capacity?
 
 def make_generator(params, gen_type, count):
     """

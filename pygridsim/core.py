@@ -134,8 +134,6 @@ class PyGridSim:
 		Args:
 			indices (optional): Which indices to view the nodes at.
 				If none given, display all
-		
-		TODO once capability for more source nodes is initialized
 		"""
 		source_obj = altdss.Vsource["source"]
 		source_info = {}
@@ -146,8 +144,6 @@ class PyGridSim:
 	def solve(self):
 		"""
 		Initialize "solve" mode in AltDSS, then allowing the user to query various results on the circuit
-
-		TODO: error handling here
 		"""
 		altdss.Solution.Solve()
 	
@@ -170,7 +166,6 @@ class PyGridSim:
 		Must call after we are done using the circuit, or will cause re-creation errors.
 
 		We only work with one circuit at a time, can only have one PyGridSim object at a time.
-		TODO: maybe this isn't necessary because it's done in the beginning
 		"""
 		altdss.ClearAll()
 		self.num_loads = 0
