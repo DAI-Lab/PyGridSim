@@ -1,7 +1,6 @@
 """
 Set any defaults (i.e. default source voltage, default node load etc.)
 """
-from altdss import altdss
 from altdss import Connection
 """
 Overall Defaults, used for load, sources, lines, etc.

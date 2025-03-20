@@ -63,7 +63,7 @@ Package to simulate OpenDSS circuits on Python
 
 # Overview
 
-TODO: Provide a short overview of the project here.
+PyGridSim aims to make building electrical circuits and corresponding circuit simulations easy for a Python coder. It builds on the distribution system OpenDSS and corresponding python package AltDSS. 
 
 # Install
 

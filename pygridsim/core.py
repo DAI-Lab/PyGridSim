@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 from altdss import altdss
-from altdss import AltDSS, Transformer, Vsource, Load, LoadModel, LoadShape
-from dss.enums import LineUnits, SolveModes
-from pygridsim.parameters import *
+from pygridsim.parameters import make_load_node, make_source_node, make_generator, make_pv
 from pygridsim.results import query_solution, export_results
 from pygridsim.lines import make_line
-from pygridsim.enums import LineType, SourceType, LoadType, GeneratorType
 
 """Main module."""
 
@@ -74,7 +71,7 @@ class PyGridSim:
 			self.num_pv += 1
 		return PV_nodes
 	
-	def add_generator(self, num: int = 1, gen_type: GeneratorType = GeneratorType.SMALL, params = {}):
+	def add_generator(self, num: int = 1, gen_type: str = "small", params = {}):
 		"""
 		Specify parameters for a generator to add to the circuit
 

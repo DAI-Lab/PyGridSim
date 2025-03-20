@@ -1,14 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from pygridsim.core import PyGridSim
-from pygridsim.enums import *
-from altdss import altdss
-from altdss import Connection
-
+from pygridsim.enums import LineType, LoadType, SourceType, GeneratorType
+import unittest
 
 """Tests for `pygridsim` package."""
-
-import unittest
 
 # from pygridsim import pygridsim
 

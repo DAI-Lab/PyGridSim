@@ -2,9 +2,9 @@
 Helper functions to parse the parameters used for loads and sources
 """
 from altdss import altdss
-from altdss import AltDSS, Transformer, Vsource, Load, PVSystem, Generator
-from pygridsim.enums import *
-from pygridsim.configs import *
+from altdss import Load, PVSystem, Generator
+from pygridsim.enums import LoadType, SourceType, GeneratorType
+from pygridsim.configs import LOAD_CONFIGURATIONS, SOURCE_CONFIGURATIONS, GENERATOR_CONFIGURATIONS
 import pygridsim.defaults as defaults
 import random
 
