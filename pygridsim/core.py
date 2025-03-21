@@ -101,43 +101,6 @@ class PyGridSim:
 			make_line(src, dst, line_type, self.num_lines, params, transformer)
 			self.num_lines += 1
 
-	def view_load_nodes(self, indices: list = []):
-		"""
-		View load nodes (what their parameters are) at the given indices.
-
-		Args:
-			indices (optional): Which indices to view the nodes at.
-				If none given, display all
-		"""
-		load_nodes = []
-		if not indices:
-			indices = [i for i in range(self.num_loads)]
-		
-		for idx in indices:
-			load_obj = altdss.Load["load" + str(idx)]
-			load_info = {}
-			load_info["name"] = "load" + str(idx)
-			load_info["kV"] = load_obj.kV
-			load_info["kW"] = load_obj.kW
-			load_info["kVar"] = load_obj.kvar
-			load_nodes.append(load_info)
-		return load_nodes
-	
-
-	def view_source_node(self):
-		"""
-		View source nodes (what their parameters are) at the given indices.
-
-		Args:
-			indices (optional): Which indices to view the nodes at.
-				If none given, display all
-		"""
-		source_obj = altdss.Vsource["source"]
-		source_info = {}
-		source_info["name"] = "source"
-		source_info["kV"] = source_obj.BasekV
-		return source_info
-
 	def solve(self):
 		"""
 		Initialize "solve" mode in AltDSS, then allowing the user to query various results on the circuit
