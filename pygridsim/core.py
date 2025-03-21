@@ -42,11 +42,8 @@ class PyGridSim:
 		Adds a main voltage source if it doesn't exist, otherwise edits it
 
 		Args:
-			params: load parameters for these manual additions
 			source_type: source type as a string
-			num (optional): number of sources to create with these parameters (removed for now)
-			(removed) num_in_batch: how many to batch together directly (so they can't be connected to lines separately, etc.
-				most common use case is if a house has 20 solar panels it's more useful to group them together)
+			params: load parameters for these manual additions
 		Return:
 			List of source_nodes
 		"""
@@ -96,6 +93,8 @@ class PyGridSim:
 		Args:
 			connections: a list of new connections to add. Each item of the list follows the form (source1, load1)
 			line_type: a string representing linetype if user wants to use preset parameters
+			params: any custom parameters for lines or transformers
+			transformer: whether or not to include a transformer, default yes
 		"""
 		for src, dst in connections:
 			make_line(src, dst, line_type, self.num_lines, params, transformer)
@@ -110,8 +109,11 @@ class PyGridSim:
 	def results(self, queries: list[str], export_path = ""):
 		"""
 		Allow the user to query for many results at once instead of learning how to manually query
-
-		Returns:
+		
+		Args:
+			queries: List of queries to fetch the result of
+			export_path: if specified, exports result to this string
+		Return:
 			Results for each query, in a dictionary
 		"""
 		results = {}
