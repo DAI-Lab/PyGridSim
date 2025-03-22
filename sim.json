@@ -1,10 +1,10 @@
 {
     "Voltages": {
-        "source": 1735.8007811315708,
-        "load0": 205.64441923330276
+        "source": 2564.5022210107522,
+        "load0": 150.17903503971436
     },
     "Losses": {
-        "Active Power Loss": 198582.96141955358,
-        "Reactive Power Loss": 412884.39931989944
+        "Active Power Loss": 318204.80842598225,
+        "Reactive Power Loss": 661419.7292504021
     }
 }

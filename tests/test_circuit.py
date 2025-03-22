@@ -8,7 +8,6 @@ import unittest
 
 # from pygridsim import pygridsim
 
-
 class TestDefaultRangeCircuit(unittest.TestCase):
     """
     All of these tests work with default range circuits (i.e. enum inputs)
