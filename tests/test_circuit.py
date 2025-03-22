@@ -1,14 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from pygridsim.core import PyGridSim
-from pygridsim.enums import *
-from altdss import altdss
-from altdss import Connection
-
+from pygridsim.enums import LineType, LoadType, SourceType, GeneratorType
+import unittest
 
 """Tests for `pygridsim` package."""
-
-import unittest
 
 # from pygridsim import pygridsim
 
@@ -42,9 +38,6 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit.update_source(source_type="turbine")
         circuit.add_load_nodes(num=1, load_type="house")
         circuit.add_lines([("source", "load0")], "MV")
-        #circuit.add_transformers([("source", "load0")], params={"Conns": [Connection.wye, Connection.delta]})
-        print("Load Nodes:", circuit.view_load_nodes())
-        print("Source Nodes:", circuit.view_source_node())
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
         circuit.clear()
@@ -98,7 +91,6 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit.add_lines([("source", "load0")], "HV")
         circuit.solve()
         print(circuit.results(["Voltages"]))
-        # TODO: can add assert to make sure it's in reasonable range?
     
     def test_007_export(self):
         circuit = PyGridSim()

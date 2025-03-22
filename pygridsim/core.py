@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 from altdss import altdss
-from altdss import AltDSS, Transformer, Vsource, Load, LoadModel, LoadShape
-from dss.enums import LineUnits, SolveModes
-from pygridsim.parameters import *
+from pygridsim.parameters import make_load_node, make_source_node, make_generator, make_pv
 from pygridsim.results import query_solution, export_results
 from pygridsim.lines import make_line
-from pygridsim.enums import LineType, SourceType, LoadType, GeneratorType
 
 """Main module."""
 
@@ -45,11 +42,8 @@ class PyGridSim:
 		Adds a main voltage source if it doesn't exist, otherwise edits it
 
 		Args:
-			params: load parameters for these manual additions
 			source_type: source type as a string
-			num (optional): number of sources to create with these parameters (removed for now)
-			(removed) num_in_batch: how many to batch together directly (so they can't be connected to lines separately, etc.
-				most common use case is if a house has 20 solar panels it's more useful to group them together)
+			params: load parameters for these manual additions
 		Return:
 			List of source_nodes
 		"""
@@ -74,7 +68,7 @@ class PyGridSim:
 			self.num_pv += 1
 		return PV_nodes
 	
-	def add_generator(self, num: int = 1, gen_type: GeneratorType = GeneratorType.SMALL, params = {}):
+	def add_generator(self, num: int = 1, gen_type: str = "small", params = {}):
 		"""
 		Specify parameters for a generator to add to the circuit
 
@@ -99,63 +93,27 @@ class PyGridSim:
 		Args:
 			connections: a list of new connections to add. Each item of the list follows the form (source1, load1)
 			line_type: a string representing linetype if user wants to use preset parameters
+			params: any custom parameters for lines or transformers
+			transformer: whether or not to include a transformer, default yes
 		"""
 		for src, dst in connections:
 			make_line(src, dst, line_type, self.num_lines, params, transformer)
 			self.num_lines += 1
 
-	def view_load_nodes(self, indices: list = []):
-		"""
-		View load nodes (what their parameters are) at the given indices.
-
-		Args:
-			indices (optional): Which indices to view the nodes at.
-				If none given, display all
-		"""
-		load_nodes = []
-		if not indices:
-			indices = [i for i in range(self.num_loads)]
-		
-		for idx in indices:
-			load_obj = altdss.Load["load" + str(idx)]
-			load_info = {}
-			load_info["name"] = "load" + str(idx)
-			load_info["kV"] = load_obj.kV
-			load_info["kW"] = load_obj.kW
-			load_info["kVar"] = load_obj.kvar
-			load_nodes.append(load_info)
-		return load_nodes
-	
-
-	def view_source_node(self):
-		"""
-		View source nodes (what their parameters are) at the given indices.
-
-		Args:
-			indices (optional): Which indices to view the nodes at.
-				If none given, display all
-		
-		TODO once capability for more source nodes is initialized
-		"""
-		source_obj = altdss.Vsource["source"]
-		source_info = {}
-		source_info["name"] = "source"
-		source_info["kV"] = source_obj.BasekV
-		return source_info
-
 	def solve(self):
 		"""
 		Initialize "solve" mode in AltDSS, then allowing the user to query various results on the circuit
-
-		TODO: error handling here
 		"""
 		altdss.Solution.Solve()
 	
 	def results(self, queries: list[str], export_path = ""):
 		"""
 		Allow the user to query for many results at once instead of learning how to manually query
-
-		Returns:
+		
+		Args:
+			queries: List of queries to fetch the result of
+			export_path: if specified, exports result to this string
+		Return:
 			Results for each query, in a dictionary
 		"""
 		results = {}
@@ -170,7 +128,6 @@ class PyGridSim:
 		Must call after we are done using the circuit, or will cause re-creation errors.
 
 		We only work with one circuit at a time, can only have one PyGridSim object at a time.
-		TODO: maybe this isn't necessary because it's done in the beginning
 		"""
 		altdss.ClearAll()
 		self.num_loads = 0

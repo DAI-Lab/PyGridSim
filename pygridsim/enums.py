@@ -1,7 +1,5 @@
 from enum import Enum
-import pygridsim.defaults as defaults
 
-# todo: update to have a name so that users can query from name
 class SourceType(Enum):
     TURBINE = "turbine"
     POWER_PLANT = "powerplant"

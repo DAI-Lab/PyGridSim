@@ -1,6 +1,6 @@
 from altdss import altdss
-from altdss import Transformer, Connection
-from pygridsim.configs import *
+from altdss import Transformer
+from pygridsim.configs import LINE_CONFIGURATIONS
 import pygridsim.defaults as defaults
 from pygridsim.enums import LineType
 from pygridsim.parameters import get_param, random_param, check_valid_params, get_enum_obj
