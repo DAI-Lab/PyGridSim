@@ -240,7 +240,7 @@ class TestCustomizedCircuit(unittest.TestCase):
         circuit = PyGridSim()
         circuit.add_load_nodes()
         circuit.update_source()
-        with self.assertRaises(ValueError):
+        with self.assertRaises(KeyError):
             # only has source, load0 for now but tries to add another one
             circuit.add_lines([("source", "load5")])
     
