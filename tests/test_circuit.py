@@ -61,8 +61,6 @@ class TestDefaultRangeCircuit(unittest.TestCase):
                     circuit.add_load_nodes(num=1, load_type=load_type.value)
                     circuit.add_lines([("source", "load0")], line_type.value)
                     circuit.solve()
-                    #print("LineType:", line_type, "SourceType", source_type, "LoadType", load_type)
-                    #print(circuit.results(["Voltages", "Losses"]))
                     circuit.clear()
 
 

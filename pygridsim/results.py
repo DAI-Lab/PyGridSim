@@ -5,15 +5,7 @@ provides helpers for the solve/results function.
 from altdss import altdss
 import json
 
-def query_solution(query):
-    """
-    Given a query, return the query result or indicate it is invalid
-
-    Args:
-        query: a query for the solve function
-    Return:
-        Query result or the string "Invalid" if the query is not supported
-    """
+def _query_solution(query):
     match query:
         case "Voltages":
             bus_vmags = {}
@@ -32,6 +24,6 @@ def query_solution(query):
         case _:
             return "Invalid"
 
-def export_results(results, path):
+def _export_results(results, path):
     with open(path, "w") as json_file:
         json.dump(results, json_file, indent=4)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from altdss import altdss
 from pygridsim.parameters import _make_load_node, _make_source_node, _make_generator, _make_pv
-from pygridsim.results import query_solution, export_results
+from pygridsim.results import _query_solution, _export_results
 from pygridsim.lines import _make_line
 
 """Main module."""
@@ -173,10 +173,10 @@ class PyGridSim:
 		"""
 		results = {}
 		for query in queries:
-			results[query] = query_solution(query)
+			results[query] = _query_solution(query)
 
 		if (export_path):
-			export_results(results, export_path)
+			_export_results(results, export_path)
 
 		return results
 	
