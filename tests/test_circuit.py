@@ -6,8 +6,6 @@ import unittest
 
 """Tests for `pygridsim` package."""
 
-# from pygridsim import pygridsim
-
 
 class TestDefaultRangeCircuit(unittest.TestCase):
     """

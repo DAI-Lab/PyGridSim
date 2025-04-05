@@ -13,7 +13,6 @@ def _query_solution(query):
                 bus_vmags[bus_name] = float(bus_vmag)
             return bus_vmags
         case "Losses":
-            # Parse it to output active power loss, reactive power loss, instead of just complex number.
             vector_losses = altdss.Losses()
             losses = {}
             losses["Active Power Loss"] = vector_losses.real
