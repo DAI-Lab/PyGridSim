@@ -81,11 +81,11 @@ setup(
     keywords='pygridsim pygridsim PyGridSim',
     name='pygridsim',
     packages=find_packages(include=['pygridsim', 'pygridsim.*']),
-    python_requires='>=3.5',
+    python_requires='>=3.8, <3.13',
     setup_requires=setup_requires,
     test_suite='tests',
     tests_require=tests_require,
     url='https://github.com/amzhao/PyGridSim',
-    version='0.1.0.dev0',
+    version='0.1.0.dev1',
     zip_safe=False,
 )
