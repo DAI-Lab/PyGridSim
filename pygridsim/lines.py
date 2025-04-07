@@ -1,24 +1,27 @@
 from altdss import altdss
-from altdss import Transformer, Connection
+from altdss import Transformer
+from pygridsim.configs import LINE_CONFIGURATIONS
 import pygridsim.defaults as defaults
-from pygridsim.parameters import get_param, random_param, check_valid_params
+from pygridsim.enums import LineType
+from pygridsim.parameters import _get_param, _random_param, _check_valid_params, _get_enum_obj
 from dss.enums import LineUnits
 
-def make_line(src, dst, line_type, count, params = {}, transformer = True):
-    """
-    Add a line between src and dst
+def _get_kv(node_name):
+    if node_name == "source" and node_name in altdss.Vsource:
+        return altdss.Vsource[node_name].BasekV
+    elif "load" in node_name and node_name in altdss.Load:
+        return altdss.Load[node_name].kV
+    elif "generator" in node_name and node_name in altdss.Generator:
+        return altdss.Generator[node_name].kV
+    else:
+        raise KeyError("Invalid src or dst name")
 
-    Args:
-        src: where line starts (node)
-        dst: where line end (node)
-        params (optional): any non-default parameters to use. Params can also include transformer params like XHL, Conns
-    Returns:
-        Line object that was created
-    """
-    check_valid_params(params, defaults.VALID_LINE_TRANSFORMER_PARAMS)
+def _make_line(src, dst, line_type, count, params = {}, transformer = True):
+    _check_valid_params(params, defaults.VALID_LINE_TRANSFORMER_PARAMS)
+    line_type_obj = _get_enum_obj(LineType, line_type)
     line = altdss.Line.new('line' + str(count))
     line.Phases = defaults.PHASES
-    line.Length = get_param(params, "length", random_param(line_type.value)) 
+    line.Length = _get_param(params, "length", _random_param(LINE_CONFIGURATIONS[line_type_obj]["length"])) 
     line.Bus1 = src
     line.Bus2 = dst
     line.Units = LineUnits.km
@@ -33,8 +36,10 @@ def make_line(src, dst, line_type, count, params = {}, transformer = True):
     transformer: Transformer = altdss.Transformer.new('transformer' + str(count))
     transformer.Phases = defaults.PHASES
     transformer.Windings = defaults.NUM_WINDINGS
-    transformer.XHL = get_param(params, "XHL", defaults.XHL) 
+    transformer.XHL = _get_param(params, "XHL", defaults.XHL) 
     transformer.Buses = [src, dst]
-    transformer.Conns = get_param(params, "Conns", [defaults.PRIMARY_CONN, defaults.SECONDARY_CONN])
-    transformer.kVs = [altdss.Vsource[src].BasekV, altdss.Load[dst].kV] 
+    transformer.Conns = _get_param(params, "Conns", [defaults.PRIMARY_CONN, defaults.SECONDARY_CONN])
+
+    transformer.kVs = [_get_kv(src), _get_kv(dst)]
+
     transformer.end_edit()

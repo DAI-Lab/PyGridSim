@@ -1,153 +1,190 @@
 # -*- coding: utf-8 -*-
 from altdss import altdss
-from altdss import AltDSS, Transformer, Vsource, Load, LoadModel, LoadShape
-from dss.enums import LineUnits, SolveModes
-from pygridsim.parameters import make_load_node, make_source_node
-from pygridsim.results import query_solution
-from pygridsim.lines import make_line
-from pygridsim.transformers import make_transformer
-from pygridsim.enums import LineType, SourceType, LoadType
+from pygridsim.parameters import _make_load_node, _make_source_node, _make_generator, _make_pv
+from pygridsim.results import _query_solution, _export_results
+from pygridsim.lines import _make_line
 
 """Main module."""
 
 class PyGridSim:
 	def __init__(self):
-		"""
-		Initialize OpenDSS/AltDSS engine. Creates an Empty Circuit
+		"""Initialize OpenDSS engine.
+
+		Instantiate an OpenDSS circuit that user can build circuit components on. Stores numbers of circuit components
+		to ensure unique naming of repeat circuit components
+		
+		Attributes:
+			num_loads (int): Number of loads in circuit so far.
+			num_lines (int): Number of lines in circuit so far.
+			num_transformers (int): Number of transformers in circuit so far.
+			num_pv (int): Number of PV systems in circuit so far.
+			num_generators (int): Number generators in circuit so far.
 		"""
 		self.num_loads = 0
-		self.num_sources = 0
 		self.num_lines = 0
 		self.num_transformers = 0
+		self.num_pv = 0
+		self.num_generators = 0
 		altdss.ClearAll()
 		altdss('new circuit.MyCircuit')
 	
-	def add_load_nodes(self, params = {}, load_type: LoadType = LoadType.HOUSE, num = 1):
-		"""
-		When the user wants to manually add nodes, or make nodes with varying parameters.
+	def add_load_nodes(self, load_type: str = "house", params: dict[str, int] = None, num: int = 1):
+		"""Adds Load Node(s) to circuit.
+		
+		Allows the user to add num load nodes, either with customized parameters or using a default load_type.
 
 		Args: 
-			params: load parameters for these manual additions
-			lines: which nodes these new loads are connected to
-			num (optional): number of loads to create with these parameters
-		Return:
-			List of load_nodes
+			load_type (str, optional):
+				Load type as a string, one of "house", "commercial", "industrial". Defaults to "house".
+			params (dict[str, int], optional):
+				Load parameters for these manual additions. Defaults to empty dictionary.
+			num (int, optional):
+				The number of loads to create with these parameters. Defaults to 1.
+
+		Returns:
+			list[OpenDSS object]:
+				A list of OpenDSS objects representing the load nodes created.
 		"""
+		params = params or dict()
 		load_nodes = []
-		for i in range(num):
-			make_load_node(params, load_type, self.num_loads)
+		for _ in range(num):
+			_make_load_node(params, load_type, self.num_loads)
 			self.num_loads += 1
+
 		return load_nodes
 
-	def add_source_nodes(self, params = {}, source_type: SourceType = SourceType.TURBINE, num_in_batch = 1, num=1):
-		"""
-		When the user wants to manually add nodes, or make nodes with varying parameters.
+	def update_source(self, source_type: str = "turbine", params: dict[str, int] = None):
+		"""Adds or updates source node in system.
+
+		If a Vsource node does not exist, it is created. Otherwise, its parameters are updated based on the provided values.
 
 		Args:
-			params: load parameters for these manual additions
-			lines: which nodes these new sources are connected to
-			num (optional): number of sources to create with these parameters (removed for now)
-			num_in_batch: how many to batch together directly (so they can't be connected to lines separately, etc.
-				most common use case is if a house has 20 solar panels it's more useful to group them together)
-		Return:
-			List of source_nodes
-		"""
-		source_nodes = []
-		for i in range(num):
-			make_source_node(params, source_type, count=self.num_sources, num_in_batch=num_in_batch)
-			self.num_sources += 1
-		return source_nodes
+			source_type (str, optional):
+				The type of the source (one of "turbine", "powerplant", "lvsub", "mvsub", "hvsub", "shvsub"). Defaults to "turbine".
+        	params (dict[str, int], optional):
+				A dictionary of parameters to configure the source node. Defaults to None.
 
-	def add_lines(self, connections, line_type: LineType = LineType.LV_LINE, params = {}, transformer = True):
+		Returns:
+			OpenDSS object:
+				The OpenDSS object representing the source node.
 		"""
-		Specify all lines that the user wants to add. If redundant lines, doesn't add anything
+		params = params or dict()
+		return _make_source_node(params, source_type)
 
-		Args:
-			connections: a list of new connections to add. Each item of the list follows the form (source1, load1)
-			TODO: allow the input to also contain optional parameters
-		"""
-		for src, dst in connections:
-			make_line(src, dst, line_type, self.num_lines, params, transformer)
-			self.num_lines += 1
+	def add_PVSystem(self, load_nodes: list[str], params: dict[str, int] = None, num_panels: int = 1):
+		"""Adds a photovoltaic (PV) system to the specified load nodes.
 
-	def add_transformers(self, connections, params = {}):
-		"""
-		Specify all transformers that the user wants to add, same input style as lines.
+		Adds PV system with num_panels to each of the listed load nodes. Can be customized with parameters.
 
 		Args:
-			connections: a list of new transformers to add (where to add them), with these params
-		TODO: remove
+			load_nodes (list[str]):
+				A list of node names where the PV system will be connected.
+			params (dict[str, int], optional):
+				A dictionary of additional parameters for the PV system. Defaults to None.
+			num_panels (int, optional):
+				The number of PV panels in the system. Defaults to 1.
+
+		Returns:
+			list[DSS objects]:
+				A list of OpenDSS objects representing the PV systems created.
 		"""
-		for src, dst in connections:
-			make_transformer(src, dst, self.num_transformers, params)
-			self.num_transformers += 1
+		params = params or dict()
+		if not load_nodes:
+			raise ValueError("Need to enter load nodes to add PVSystem to")
 
+		PV_nodes = []
+		for load in load_nodes:
+			PV_nodes.append(_make_pv(load, params, num_panels, self.num_pv))
+			self.num_pv += 1
 
-	def view_load_nodes(self, indices = []):
-		"""
-		View load nodes (what their parameters are) at the given indices.
-
+		return PV_nodes
+	
+	def add_generator(self, num: int = 1, gen_type: str = "small", params: dict[str, int] = None):
+		"""Adds generator(s) to the system.
+	
 		Args:
-			indices (optional): Which indices to view the nodes at.
-				If none given, display all
+			num (int, optional):  
+				The number of generator units to add. Defaults to 1.  
+			gen_type (str, optional):  
+				The type of generator (one of "small", "large", "industrial"). Defaults to "small".  
+			params (dict[str, int], optional):  
+				A dictionary of parameters to configure the generator. Defaults to None.  
+
+		Returns:
+			list[DSS objects]:
+				A list of OpenDSS objects representing the generators created.
 		"""
-		load_nodes = []
-		if not indices:
-			indices = [i for i in range(self.num_loads)]
-		
-		for idx in indices:
-			load_obj = altdss.Load["load" + str(idx)]
-			load_info = {}
-			load_info["name"] = "load" + str(idx)
-			load_info["kV"] = load_obj.kV
-			load_info["kW"] = load_obj.kW
-			load_info["kVar"] = load_obj.kvar
-			load_nodes.append(load_info)
-		return load_nodes
+		params = params or dict()
+		generators = []
+		for _ in range(num):
+			generators.append(_make_generator(params, gen_type, count=self.num_generators))
+			self.num_generators += 1
+
+		return generators
 	
 
-	def view_source_node(self):
-		"""
-		View source nodes (what their parameters are) at the given indices.
+	def add_lines(self, connections: list[tuple], line_type: str = "lv", params: dict[str, int] = None, transformer: bool = True):
+		"""Adds lines to the system.
+
+		Adds electrical lines according to the given connections. Users can specify the parameters of the lines or otherwise use given line type options. 
 
 		Args:
-			indices (optional): Which indices to view the nodes at.
-				If none given, display all
-		
-		TODO once capability for more source nodes is initialized
+			connections (list[tuple]):  
+				A list of tuples defining the connections between nodes.  
+			line_type (str, optional):  
+				The type of line (one of "lv", "mv", "hv"). Defaults to "lv".  
+			params (dict[str, int], optional):  
+				A dictionary of parameters to configure the lines. Defaults to None.  
+			transformer (bool, optional):  
+				Whether to include a transformer in the connection. Defaults to True.  
+
+		Returns:
+			None
 		"""
-		source_obj = altdss.Vsource["source"]
-		source_info = {}
-		source_info["name"] = "source"
-		source_info["kV"] = source_obj.BasekV
-		return source_info
+		params = params or dict()
+		for src, dst in connections:
+			_make_line(src, dst, line_type, self.num_lines, params, transformer)
+			self.num_lines += 1
 
 	def solve(self):
-		"""
-		Initialize "solve" mode in AltDSS, then allowing the user to query various results on the circuit
+		"""Solves the OpenDSS circuit.
 
-		TODO: error handling here
+		Initializes "solve" mode in OpenDSS, which then allows the user to query results on the circuit.
+
+		Returns:
+			None
 		"""
 		altdss.Solution.Solve()
 	
-	def results(self, queries):
-		"""
-		Allow the user to query for many results at once instead of learning how to manually query
+	def results(self, queries: list[str], export_path = ""):
+		"""Gets simulation results based on specified queries.
+	
+		Allows the user to query for many results at once by providing a list of desired queries.
+		
+		Args:
+			queries (list[str]):  
+				A list of queries to the circuit ("Voltages", "Losses", "TotalPower")
+			export_path (str, optional):  
+				The file path to export results. If empty, results are not exported. Defaults to "".  
 
 		Returns:
-			Results for each query, in a dictionary
+			dict:  
+				A dictionary containing the fetched simulation results.
 		"""
 		results = {}
 		for query in queries:
-			results[query] = query_solution(query)
+			results[query] = _query_solution(query)
+
+		if (export_path):
+			_export_results(results, export_path)
+
 		return results
 	
 	def clear(self):
-		"""
-		Must call after we are done using the circuit, or will cause re-creation errors.
+		"""Clears the OpenDSS circuit.
 
-		We only work with one circuit at a time, can only have one PyGridSim object at a time.
-		TODO: maybe this isn't necessary because it's done in the beginning
+		Returns:
+			None
 		"""
 		altdss.ClearAll()
 		self.num_loads = 0
