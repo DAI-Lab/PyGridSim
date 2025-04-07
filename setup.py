@@ -35,6 +35,9 @@ development_requires = [
     'Sphinx>=1.7.1,<3',
     'sphinx_rtd_theme>=0.2.4,<0.5',
     'autodocsumm>=0.1.10',
+    'mistune>=0.7,<2',
+    'Jinja2>=2,<3.1',
+    'markupsafe<2.1.0',
 
     # style check
     'flake8>=3.7.7',
