@@ -3,17 +3,9 @@ Defines the set of allowed queries (i.e. baseKV at every node) and
 provides helpers for the solve/results function.
 """
 from altdss import altdss
+import json
 
-def query_solution(query):
-    """
-    Given a query, return the query result or indicate it is invalid
-
-    Args:
-        queries: a list of queriies for the solve function
-        TODO: only BusVMag, Losses, TotalPower is supported, need to make accessible which queries are supported
-    Return:
-        Query result or the string "Invalid" if the query is not supported
-    """
+def _query_solution(query):
     match query:
         case "Voltages":
             bus_vmags = {}
@@ -21,7 +13,6 @@ def query_solution(query):
                 bus_vmags[bus_name] = float(bus_vmag)
             return bus_vmags
         case "Losses":
-            # Parse it to output active power loss, reactive power loss, instead of just complex number.
             vector_losses = altdss.Losses()
             losses = {}
             losses["Active Power Loss"] = vector_losses.real
@@ -32,3 +23,6 @@ def query_solution(query):
         case _:
             return "Invalid"
 
+def _export_results(results, path):
+    with open(path, "w") as json_file:
+        json.dump(results, json_file, indent=4)

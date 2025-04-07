@@ -1,25 +1,6 @@
 """
 Set any defaults (i.e. default source voltage, default node load etc.)
-Will start with things like HOUSE_KV to define typical load of a house (perhaps with some variance)
-
-Source:
-Define default values for a few types of objects.
-In a neighborhood the main ones are
-solar panels, wind turbines
-
-Load:
-Define for a typical house, using statistics
-https://forum.allaboutcircuits.com/threads/what-is-the-actual-household-voltage-110-115-120-220-240.3320/
-https://www.eia.gov/energyexplained/use-of-energy/electricity-use-in-homes.php?utm_source=chatgpt.com
-
-In the second iteration
-- implement the typical LoadShape in the house
-- some randomness to cover the standard distribution of houses, not all the averages
-
-For now, many of them are listed as tuples - lower end, higher end.
-TODO: make generate function that does Math.rand for in the range (later: improve distribution to be non-uniform)
 """
-from altdss import altdss
 from altdss import Connection
 """
 Overall Defaults, used for load, sources, lines, etc.
@@ -46,12 +27,26 @@ INDUSTRIAL_KW = [30, 100]
 INDUSTRIAL_KVAR = [20, 25]
 
 """
-Source Nodes
-TODO also fuel cells, other less common forms of energy later
+Source Nodes (including other form of sources, like PVSystem)
 """
+IMPEDANCE = 0.0001
+TURBINE_BASE_KV = [1,3]
+POWER_PLANT_KV = [10, 20]
+LV_SUBSTATION_BASE_KV = [0.2, 0.4]
+MV_SUBSTATION_BASE_KV = [6, 35]
+HV_SUBSTATION_BASE_KV = [66, 500]
+SHV_SUBSTATION_BASE_KV = [500, 1000]
 
-TURBINE_BASE_KV = [3000,4000]
 SOLAR_PANEL_BASE_KV = [0.2, 0.4] # per solar panel
+"""
+Generator default values (small, large, industrial)
+"""
+SMALL_GEN_KV = [0.2, 0.6]
+LARGE_GEN_KV = [1, 35]
+INDUSTRIAL_GEN_KV = [35, 100]
+SMALL_GEN_KW = [2,5]
+LARGE_GEN_KW = [5,10]
+INDUSTRIAL_GEN_KW = [10,20]
 
 """
 Units: KM
@@ -72,6 +67,10 @@ SECONDARY_CONN = Connection.wye
 """
 Valid parameter lists
 """
-VALID_LOAD_PARAMS = ["kV", "kW", "kVar", "phases"]
-VALID_SOURCE_PARAMS = ["kV", "phases", "frequency"]
+IMPEDANCE_PARAMS = ["R0", "R1", "X0", "X1"]
+
+VALID_LOAD_PARAMS = ["kV", "kW", "kvar", "phases"]
+VALID_SOURCE_PARAMS = ["kV", "phases", "frequency"] + IMPEDANCE_PARAMS
 VALID_LINE_TRANSFORMER_PARAMS = ["length", "XHL", "Conns"]
+VALID_PV_PARAMS = ["kV", "phases"]
+VALID_GENERATOR_PARAMS = ["kV", "kW", "phases"]
