@@ -1,10 +1,10 @@
-from altdss import altdss
-from altdss import Transformer
-from pygridsim.configs import LINE_CONFIGURATIONS
-import pygridsim.defaults as defaults
-from pygridsim.enums import LineType
-from pygridsim.parameters import _get_param, _random_param, _check_valid_params, _get_enum_obj
+from altdss import Transformer, altdss
 from dss.enums import LineUnits
+
+import pygridsim.defaults as defaults
+from pygridsim.configs import LINE_CONFIGURATIONS
+from pygridsim.enums import LineType
+from pygridsim.parameters import _check_valid_params, _get_enum_obj, _get_param, _random_param
 
 
 def _get_kv(node_name):

@@ -1,5 +1,5 @@
-from pygridsim.enums import LoadType, LineType, GeneratorType, SourceType
 import pygridsim.defaults as defaults
+from pygridsim.enums import GeneratorType, LineType, LoadType, SourceType
 
 LOAD_CONFIGURATIONS = {
     LoadType.HOUSE: {

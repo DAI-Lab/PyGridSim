@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from altdss import altdss
-from pygridsim.parameters import _make_load_node, _make_source_node, _make_generator, _make_pv
-from pygridsim.results import _query_solution, _export_results
+
 from pygridsim.lines import _make_line
+from pygridsim.parameters import _make_generator, _make_load_node, _make_pv, _make_source_node
+from pygridsim.results import _export_results, _query_solution
 
 """Main module."""
 
@@ -40,7 +41,8 @@ class PyGridSim:
 
         Args:
             load_type (str, optional):
-                Load type as a string, one of "house", "commercial", "industrial". Defaults to "house".
+                Load type as a string, one of "house", "commercial", "industrial".
+                Defaults to "house".
             params (dict[str, int], optional):
                 Load parameters for these manual additions. Defaults to empty dictionary.
             num (int, optional):

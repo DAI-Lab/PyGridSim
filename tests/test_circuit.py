@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from pygridsim.core import PyGridSim
-from pygridsim.enums import LineType, LoadType, SourceType, GeneratorType
 import unittest
+
+from pygridsim.core import PyGridSim
+from pygridsim.enums import GeneratorType, LineType, LoadType, SourceType
 
 """Tests for `pygridsim` package."""
 
@@ -173,7 +174,6 @@ class TestCustomizedCircuit(unittest.TestCase):
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
-        pass
 
     def test_100_one_source_one_load(self):
         circuit = PyGridSim()
