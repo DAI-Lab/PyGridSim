@@ -34,8 +34,9 @@ class PyGridSim:
                        params: dict[str, int] = None,
                        num: int = 1):
         """Adds Load Node(s) to circuit.
-        
-        Allows the user to add num load nodes, either with customized parameters or using a default load_type.
+
+        Allows the user to add num load nodes,
+        either with customized parameters or using a default load_type.
 
         Args:
             load_type (str, optional):
@@ -170,7 +171,7 @@ class PyGridSim:
             None
         """
         altdss.Solution.Solve()
-    
+
     def results(self, queries: list[str], export_path=""):
         """Gets simulation results based on specified queries.
 
@@ -180,7 +181,8 @@ class PyGridSim:
             queries (list[str]):
                 A list of queries to the circuit ("Voltages", "Losses", "TotalPower")
             export_path (str, optional):
-                The file path to export results. If empty, results are not exported. Defaults to "".
+                The file path to export results. If empty, results are not exported.
+                Defaults to "".
 
         Returns:
             dict:
