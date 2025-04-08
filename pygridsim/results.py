@@ -5,6 +5,7 @@ provides helpers for the solve/results function.
 from altdss import altdss
 import json
 
+
 def _query_solution(query):
     match query:
         case "Voltages":
@@ -22,6 +23,7 @@ def _query_solution(query):
             return altdss.TotalPower()
         case _:
             return "Invalid"
+
 
 def _export_results(results, path):
     with open(path, "w") as json_file:

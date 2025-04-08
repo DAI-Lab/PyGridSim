@@ -20,7 +20,6 @@ class TestDefaultRangeCircuit(unittest.TestCase):
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
-        #altdss.ClearAll()
 
     def test_000_basic(self):
         circuit = PyGridSim()
@@ -39,13 +38,13 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
         circuit.clear()
-    
+
     def test_002_one_source_one_load_no_transformer(self):
         # doesn't throw error, but should have stranger output VMag
         circuit = PyGridSim()
         circuit.update_source(source_type="turbine")
         circuit.add_load_nodes(num=1, load_type="house")
-        circuit.add_lines([("source", "load0")],"MV", transformer=False)
+        circuit.add_lines([("source", "load0")], "MV", transformer=False)
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
         circuit.clear()
@@ -61,7 +60,6 @@ class TestDefaultRangeCircuit(unittest.TestCase):
                     circuit.solve()
                     circuit.clear()
 
-
     def test_004_one_source_multi_load(self):
         circuit = PyGridSim()
         circuit.update_source(source_type="turbine")
@@ -70,7 +68,7 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit.solve()
         print(circuit.results(["Voltages"]))
         circuit.clear()
-    
+
     def test_005_bad_query(self):
         circuit = PyGridSim()
         circuit.update_source()
@@ -87,7 +85,7 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit.add_lines([("source", "load0")], "HV")
         circuit.solve()
         print(circuit.results(["Voltages"]))
-    
+
     def test_007_export(self):
         circuit = PyGridSim()
         circuit.update_source()
@@ -95,7 +93,7 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit.add_lines([("source", "load0")])
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"], export_path="sim.json"))
-    
+
     def test_008_PVsystem(self):
         circuit = PyGridSim()
         circuit.update_source()
@@ -120,7 +118,7 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit.add_load_nodes(num=3)
         circuit.add_PVSystem(load_nodes=["load1", "load2"], num_panels=10)
         circuit.add_generator(num=3, gen_type="small")
-        circuit.update_source(source_type="turbine") # change to a turbine source midway
+        circuit.update_source(source_type="turbine")
         circuit.add_generator(num=4, gen_type="large")
         circuit.add_lines([("source", "load0"), ("generator0", "load0"), ("generator5", "source")])
         circuit.solve()
@@ -166,13 +164,12 @@ class TestDefaultRangeCircuit(unittest.TestCase):
 
 class TestCustomizedCircuit(unittest.TestCase):
     """
-    Test with exact parameters entered. won't be the typical client use case, but should check that these matche exact values
+    Test with exact parameters entered.
     """
 
     def setUp(self):
         """Set up test fixtures, if any."""
         print("\nTest", self._testMethodName)
-
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -189,16 +186,17 @@ class TestCustomizedCircuit(unittest.TestCase):
 
     def test_100_one_source_multi_load(self):
         """
-        Creates 10 loads, some of which are connected to source. all loads and lines here have the same params
+        Creates 10 loads, some of which are connected to source. All loads and lines here have the same params.
         """
         circuit = PyGridSim()
         circuit.update_source(params={"kV": 100})
         circuit.add_load_nodes(num=10, params={"kV": 10, "kW": 20, "kvar":1})
-        circuit.add_lines([("source", "load0"), ("source", "load4"), ("source", "load6")], params={"length": 20})
+        circuit.add_lines([("source", "load0"), ("source", "load4"), ("source", "load6")],
+                          params={"length": 20})
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
         circuit.clear()
-    
+
     def test_101_bad_parameter(self):
         """
         Should error with a bad parameter and tell the user which parameter is bad
@@ -220,14 +218,14 @@ class TestCustomizedCircuit(unittest.TestCase):
         Should error with negative kv or negative length
         """
         circuit = PyGridSim()
-        
+
         with self.assertRaises(Exception):
             # openDSS has its own exception for this case
             circuit.add_load_nodes(params={"kV": -1})
-        
+
         with self.assertRaises(ValueError):
             circuit.update_source(params={"kV": -1})
-        
+
         # properly add load and source, then create invalid line
         with self.assertRaises(ValueError):
             circuit.add_lines([("source", "load0")], params={"length": -100})
@@ -239,22 +237,8 @@ class TestCustomizedCircuit(unittest.TestCase):
         with self.assertRaises(KeyError):
             # only has source, load0 for now but tries to add another one
             circuit.add_lines([("source", "load5")])
-    
+
     def test_104_non_int_parameters(self):
         circuit = PyGridSim()
         with self.assertRaises(TypeError):
             circuit.add_load_nodes(params={"kV": "stringInput"})
-
-
-class TestLargeCircuit(unittest.TestCase):
-    """
-    Test very large circuit (i.e. to the size of a neighborhood)
-    """
-    def setUp(self):
-        """Set up test fixtures, if any."""
-        print("\nTest", self._testMethodName)
-
-
-    def tearDown(self):
-        """Tear down test fixtures, if any."""
-        pass
