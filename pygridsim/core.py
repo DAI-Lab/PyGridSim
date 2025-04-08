@@ -13,7 +13,7 @@ class PyGridSim:
 
         Instantiate an OpenDSS circuit that user can build circuit components on.
         Stores numbers of circuit components to ensure unique naming of repeat circuit components.
-        
+
         Attributes:
             num_loads (int): Number of loads in circuit so far.
             num_lines (int): Number of lines in circuit so far.
@@ -29,12 +29,15 @@ class PyGridSim:
         altdss.ClearAll()
         altdss('new circuit.MyCircuit')
 
-    def add_load_nodes(self, load_type: str = "house", params: dict[str, int] = None, num: int = 1):
+    def add_load_nodes(self,
+                       load_type: str = "house",
+                       params: dict[str, int] = None,
+                       num: int = 1):
         """Adds Load Node(s) to circuit.
         
         Allows the user to add num load nodes, either with customized parameters or using a default load_type.
 
-        Args: 
+        Args:
             load_type (str, optional):
                 Load type as a string, one of "house", "commercial", "industrial". Defaults to "house".
             params (dict[str, int], optional):
@@ -75,7 +78,10 @@ class PyGridSim:
         params = params or dict()
         return _make_source_node(params, source_type)
 
-    def add_PVSystem(self, load_nodes: list[str], params: dict[str, int] = None, num_panels: int = 1):
+    def add_PVSystem(self,
+                     load_nodes: list[str],
+                     params: dict[str, int] = None,
+                     num_panels: int = 1):
         """Adds a photovoltaic (PV) system to the specified load nodes.
 
         Adds PV system with num_panels to each of the listed load nodes.
@@ -103,10 +109,10 @@ class PyGridSim:
             self.num_pv += 1
 
         return PV_nodes
-    
+
     def add_generator(self, num: int = 1, gen_type: str = "small", params: dict[str, int] = None):
         """Adds generator(s) to the system.
-    
+
         Args:
             num (int, optional):
                 The number of generator units to add. Defaults to 1.
@@ -126,9 +132,12 @@ class PyGridSim:
             self.num_generators += 1
 
         return generators
-    
 
-    def add_lines(self, connections: list[tuple], line_type: str = "lv", params: dict[str, int] = None, transformer: bool = True):
+    def add_lines(self,
+                  connections: list[tuple],
+                  line_type: str = "lv",
+                  params: dict[str, int] = None,
+                  transformer: bool = True):
         """Adds lines to the system.
 
         Adds electrical lines according to the given connections.
@@ -155,18 +164,18 @@ class PyGridSim:
     def solve(self):
         """Solves the OpenDSS circuit.
 
-        Initializes "solve" mode in OpenDSS, which then allows the user to query results on the circuit.
+        Initializes "solve" mode in OpenDSS, which allows user to query results on the circuit.
 
         Returns:
             None
         """
         altdss.Solution.Solve()
     
-    def results(self, queries: list[str], export_path = ""):
+    def results(self, queries: list[str], export_path=""):
         """Gets simulation results based on specified queries.
-    
+
         Allows the user to query for many results at once by providing a list of desired queries.
-        
+
         Args:
             queries (list[str]):
                 A list of queries to the circuit ("Voltages", "Losses", "TotalPower")
@@ -185,7 +194,7 @@ class PyGridSim:
             _export_results(results, export_path)
 
         return results
-    
+
     def clear(self):
         """Clears the OpenDSS circuit.
 

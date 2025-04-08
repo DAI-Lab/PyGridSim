@@ -37,7 +37,7 @@ MV_SUBSTATION_BASE_KV = [6, 35]
 HV_SUBSTATION_BASE_KV = [66, 500]
 SHV_SUBSTATION_BASE_KV = [500, 1000]
 
-SOLAR_PANEL_BASE_KV = [0.2, 0.4] #per solar panel
+SOLAR_PANEL_BASE_KV = [0.2, 0.4]  # per solar panel
 """
 Generator default values (small, large, industrial)
 """

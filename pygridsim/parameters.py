@@ -91,7 +91,7 @@ def _make_generator(params, gen_type, count):
     _check_valid_params(params, defaults.VALID_GENERATOR_PARAMS)
     gen_type_obj = _get_enum_obj(GeneratorType, gen_type)
 
-    generator : Generator = altdss.Generator.new('generator' + str(count))
+    generator: Generator = altdss.Generator.new('generator' + str(count))
     generator.Bus1 = 'generator' + str(count)
     generator.Phases = _get_param(params, "phases", defaults.PHASES)
     for attr in ["kV", "kW"]:

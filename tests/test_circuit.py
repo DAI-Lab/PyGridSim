@@ -111,7 +111,7 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit.add_lines([("source", "load0"), ("generator0", "load0")])
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
-    
+
     def test_010_many_sources(self):
         circuit = PyGridSim()
         circuit.update_source(source_type="powerplant")
@@ -137,7 +137,7 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         # don't want loadtype input, just string
         with self.assertRaises(Exception):
             circuit.add_load_nodes(num=2, load_type=LoadType.HOUSE)
-        
+
         # LINE CONFIG
         # works, because not case sensitive
         circuit.add_lines([("source", "load0")], line_type="HV")
@@ -178,7 +178,7 @@ class TestCustomizedCircuit(unittest.TestCase):
     def test_100_one_source_one_load(self):
         circuit = PyGridSim()
         circuit.update_source(params={"kV": 100, "R0": 0.1, "R1": 0.2, "X0": 0.3, "X1": 0.4})
-        circuit.add_load_nodes(num=1, params={"kV": 10, "kW": 20, "kvar":1})
+        circuit.add_load_nodes(num=1, params={"kV": 10, "kW": 20, "kvar": 1})
         circuit.add_lines([("source", "load0")], params={"length": 20})
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
@@ -186,11 +186,12 @@ class TestCustomizedCircuit(unittest.TestCase):
 
     def test_100_one_source_multi_load(self):
         """
-        Creates 10 loads, some of which are connected to source. All loads and lines here have the same params.
+        Creates 10 loads, some of which are connected to source.
+        All loads and lines here have the same params.
         """
         circuit = PyGridSim()
         circuit.update_source(params={"kV": 100})
-        circuit.add_load_nodes(num=10, params={"kV": 10, "kW": 20, "kvar":1})
+        circuit.add_load_nodes(num=10, params={"kV": 10, "kW": 20, "kvar": 1})
         circuit.add_lines([("source", "load0"), ("source", "load4"), ("source", "load6")],
                           params={"length": 20})
         circuit.solve()
@@ -207,7 +208,7 @@ class TestCustomizedCircuit(unittest.TestCase):
         with self.assertRaises(KeyError):
             circuit.add_load_nodes(num=4, params={"badParam": 100})
         # add load nodes so we can test pv system erroring
-        circuit.add_load_nodes(num=2, params={"kV": 10, "kW": 20, "kvar":1})
+        circuit.add_load_nodes(num=2, params={"kV": 10, "kW": 20, "kvar": 1})
         with self.assertRaises(KeyError):
             circuit.add_generator(num=4, params={"badParam": 100})
         with self.assertRaises(KeyError):
