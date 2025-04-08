@@ -18,7 +18,7 @@
 # relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
 
-import sphinx_rtd_theme # For read the docs theme
+import sphinx_rtd_theme  # For read the docs theme
 
 import pygridsim
 

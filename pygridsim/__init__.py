@@ -5,3 +5,7 @@
 __author__ = 'Angela Zhao'
 __email__ = 'amzhao@mit.edu'
 __version__ = '0.1.0.dev1'
+
+from pygridsim.core import PyGridSim
+
+__all__ = ['PyGridSim']
