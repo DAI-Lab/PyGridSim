@@ -1,20 +1,20 @@
-from pygridsim.enums import LoadType, LineType, GeneratorType, SourceType
 import pygridsim.defaults as defaults
+from pygridsim.enums import GeneratorType, LineType, LoadType, SourceType
 
 LOAD_CONFIGURATIONS = {
     LoadType.HOUSE: {
-        "kV": defaults.HOUSE_KV, 
-        "kW": defaults.HOUSE_KW, 
+        "kV": defaults.HOUSE_KV,
+        "kW": defaults.HOUSE_KW,
         "kvar": defaults.HOUSE_KVAR
     },
     LoadType.COMMERCIAL: {
         "kV": defaults.COMMERCIAL_KV,
-        "kW": defaults.COMMERCIAL_KW, 
+        "kW": defaults.COMMERCIAL_KW,
         "kvar": defaults.COMMERCIAL_KVAR
     },
     LoadType.INDUSTRIAL: {
-        "kV": defaults.INDUSTRIAL_KV, 
-        "kW": defaults.INDUSTRIAL_KW, 
+        "kV": defaults.INDUSTRIAL_KV,
+        "kW": defaults.INDUSTRIAL_KW,
         "kvar": defaults.INDUSTRIAL_KVAR
     }
 }
@@ -54,15 +54,15 @@ LINE_CONFIGURATIONS = {
 
 GENERATOR_CONFIGURATIONS = {
     GeneratorType.SMALL: {
-        "kV": defaults.SMALL_GEN_KV, 
-        "kW": defaults.SMALL_GEN_KW, 
+        "kV": defaults.SMALL_GEN_KV,
+        "kW": defaults.SMALL_GEN_KW,
     },
     GeneratorType.LARGE: {
-        "kV": defaults.LARGE_GEN_KV, 
-        "kW": defaults.LARGE_GEN_KW, 
+        "kV": defaults.LARGE_GEN_KV,
+        "kW": defaults.LARGE_GEN_KW,
     },
     GeneratorType.INDUSTRIAL: {
-        "kV": defaults.INDUSTRIAL_GEN_KV, 
-        "kW": defaults.INDUSTRIAL_GEN_KW, 
+        "kV": defaults.INDUSTRIAL_GEN_KV,
+        "kW": defaults.INDUSTRIAL_GEN_KW,
     }
 }

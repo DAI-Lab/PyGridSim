@@ -3,7 +3,7 @@
 
 """The setup script."""
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open('README.md', encoding='utf-8') as readme_file:
     readme = readme_file.read()
@@ -31,10 +31,14 @@ development_requires = [
     'watchdog>=0.8.3',
 
     # docs
-    'm2r>=0.2.0,<0.3',
-    'Sphinx>=1.7.1,<3',
+    'm2r2<4',
+    'docutils>=0.12,<1',
+    'nbsphinx>=0.5.0,<1',
+    'sphinx_toolbox>=2.5,<4',
+    'Sphinx>=3,<7',
+    'markupsafe<3',
+    'ipython>=6.5,<12',
     'sphinx_rtd_theme>=0.2.4,<0.5',
-    'autodocsumm>=0.1.10',
 
     # style check
     'flake8>=3.7.7',
@@ -81,7 +85,7 @@ setup(
     keywords='pygridsim pygridsim PyGridSim',
     name='pygridsim',
     packages=find_packages(include=['pygridsim', 'pygridsim.*']),
-    python_requires='>=3.8, <3.13',
+    python_requires='>=3.10, <3.13',
     setup_requires=setup_requires,
     test_suite='tests',
     tests_require=tests_require,

@@ -2,8 +2,10 @@
 Defines the set of allowed queries (i.e. baseKV at every node) and
 provides helpers for the solve/results function.
 """
-from altdss import altdss
 import json
+
+from altdss import altdss
+
 
 def _query_solution(query):
     match query:
@@ -22,6 +24,7 @@ def _query_solution(query):
             return altdss.TotalPower()
         case _:
             return "Invalid"
+
 
 def _export_results(results, path):
     with open(path, "w") as json_file:
