@@ -2,7 +2,6 @@
 from altdss import altdss
 
 from pygridsim.configs import NAME_TO_CONFIG
-from pygridsim.enums import LoadType
 from pygridsim.lines import _make_line
 from pygridsim.parameters import _make_generator, _make_load_node, _make_pv, _make_source_node
 from pygridsim.results import _export_results, _query_solution
@@ -209,7 +208,7 @@ class PyGridSim:
 
     def get_types(self, component: str, show_ranges: bool = False):
         """Provides list of all supported Load Types
-    
+
         Args:
             component (str):
                 Which component to get, one of (one of "load", "source", "pv", "line")
@@ -228,7 +227,8 @@ class PyGridSim:
         if component_simplified in NAME_TO_CONFIG:
             configuration = NAME_TO_CONFIG[component_simplified]
         else:
-            raise KeyError(f"Invalid component input: expect one of {[name for name in NAME_TO_CONFIG]}")
+            raise KeyError(
+                f"Invalid component input: expect one of {[name for name in NAME_TO_CONFIG]}")
 
         if not show_ranges:
             return [component_type.value for component_type in configuration]
