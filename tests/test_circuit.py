@@ -256,5 +256,12 @@ class TestTypeQueryFunctions(unittest.TestCase):
 
     def test_200_type_queries(self):
         circuit = PyGridSim()
-        print(circuit.get_load_types())
-        print(circuit.get_load_types(show_ranges=True))
+        # should still work if plural, capitalized, spaces
+        for component in ["load ", "sources", "Line", "GENERATOR"]:
+            print(circuit.get_types(component))
+            print(circuit.get_types(component, show_ranges=True))
+
+    def test_200_invalid_type_quer(self):
+        circuit = PyGridSim()
+        with self.assertRaises(KeyError):
+            circuit.get_types("bad_component_name")

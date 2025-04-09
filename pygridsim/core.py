@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from altdss import altdss
 
-from pygridsim.configs import LOAD_CONFIGURATIONS
+from pygridsim.configs import NAME_TO_CONFIG
 from pygridsim.enums import LoadType
 from pygridsim.lines import _make_line
 from pygridsim.parameters import _make_generator, _make_load_node, _make_pv, _make_source_node
@@ -207,10 +207,12 @@ class PyGridSim:
         for key in self.counts:
             self.counts[key] = 0
 
-    def get_load_types(self, show_ranges: bool = False):
+    def get_types(self, component: str, show_ranges: bool = False):
         """Provides list of all supported Load Types
     
         Args:
+            component (str):
+                Which component to get, one of (one of "load", "source", "pv", "line")
             show_ranges (bool, optional):
                 Whether to show all configuration ranges in output.
 
@@ -219,12 +221,21 @@ class PyGridSim:
                 A list containing all load types, if show_ranges False.
                 A list of tuples showing all load types and configurations, if show_ranges True.
         """
+        component_simplified = component.lower().replace(" ", "")
+        if (component_simplified[-1] == "s"):
+            component_simplified = component_simplified[:-1]
+        configuration = {}
+        if component_simplified in NAME_TO_CONFIG:
+            configuration = NAME_TO_CONFIG[component_simplified]
+        else:
+            raise KeyError(f"Invalid component input: expect one of {[name for name in NAME_TO_CONFIG]}")
+
         if not show_ranges:
-            return [load_type.value for load_type in LoadType]
+            return [component_type.value for component_type in configuration]
 
-        load_types = []
-        for load_type in LoadType:
-            config_dict = LOAD_CONFIGURATIONS[load_type]
-            load_types.append((load_type.value, config_dict))
+        component_types = []
+        for component_type in configuration:
+            config_dict = configuration[component_type]
+            component_types.append((component_type.value, config_dict))
 
-        return load_types
+        return component_types
