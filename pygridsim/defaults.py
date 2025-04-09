@@ -22,9 +22,9 @@ COMMERCIAL_KV = [.24, .48]
 COMMERCIAL_KW = [10, 50]
 COMMERCIAL_KVAR = [5, 10]
 
-INDUSTRIAL_KV = [.24, .48]
-INDUSTRIAL_KW = [30, 100]
-INDUSTRIAL_KVAR = [20, 25]
+INDUSTRIAL_KV = [4.16, 34.5]
+INDUSTRIAL_KW = [200, 10000]
+INDUSTRIAL_KVAR = [150, 480]
 
 """
 Source Nodes (including other form of sources, like PVSystem)
