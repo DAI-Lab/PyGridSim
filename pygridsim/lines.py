@@ -1,10 +1,11 @@
-from altdss import altdss
-from altdss import Transformer
-from pygridsim.configs import LINE_CONFIGURATIONS
-import pygridsim.defaults as defaults
-from pygridsim.enums import LineType
-from pygridsim.parameters import _get_param, _random_param, _check_valid_params, _get_enum_obj
+from altdss import Transformer, altdss
 from dss.enums import LineUnits
+
+import pygridsim.defaults as defaults
+from pygridsim.configs import LINE_CONFIGURATIONS
+from pygridsim.enums import LineType
+from pygridsim.parameters import _check_valid_params, _get_enum_obj, _get_param, _random_param
+
 
 def _get_kv(node_name):
     if node_name == "source" and node_name in altdss.Vsource:
@@ -16,12 +17,14 @@ def _get_kv(node_name):
     else:
         raise KeyError("Invalid src or dst name")
 
-def _make_line(src, dst, line_type, count, params = {}, transformer = True):
+
+def _make_line(src, dst, line_type, count, params={}, transformer=True):
     _check_valid_params(params, defaults.VALID_LINE_TRANSFORMER_PARAMS)
     line_type_obj = _get_enum_obj(LineType, line_type)
     line = altdss.Line.new('line' + str(count))
     line.Phases = defaults.PHASES
-    line.Length = _get_param(params, "length", _random_param(LINE_CONFIGURATIONS[line_type_obj]["length"])) 
+    rand_length = _random_param(LINE_CONFIGURATIONS[line_type_obj]["length"])
+    line.Length = _get_param(params, "length", rand_length)
     line.Bus1 = src
     line.Bus2 = dst
     line.Units = LineUnits.km
@@ -36,7 +39,7 @@ def _make_line(src, dst, line_type, count, params = {}, transformer = True):
     transformer: Transformer = altdss.Transformer.new('transformer' + str(count))
     transformer.Phases = defaults.PHASES
     transformer.Windings = defaults.NUM_WINDINGS
-    transformer.XHL = _get_param(params, "XHL", defaults.XHL) 
+    transformer.XHL = _get_param(params, "XHL", defaults.XHL)
     transformer.Buses = [src, dst]
     transformer.Conns = [defaults.PRIMARY_CONN, defaults.SECONDARY_CONN]
     transformer.kVs = [_get_kv(src), _get_kv(dst)]
