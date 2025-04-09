@@ -243,3 +243,18 @@ class TestCustomizedCircuit(unittest.TestCase):
         circuit = PyGridSim()
         with self.assertRaises(TypeError):
             circuit.add_load_nodes(params={"kV": "stringInput"})
+
+
+class TestTypeQueryFunctions(unittest.TestCase):
+
+    def setUp(self):
+        """Set up test fixtures, if any."""
+        print("\nTest", self._testMethodName)
+
+    def tearDown(self):
+        """Tear down test fixtures, if any."""
+
+    def test_200_type_queries(self):
+        circuit = PyGridSim()
+        print(circuit.get_load_types())
+        print(circuit.get_load_types(show_ranges=True))
