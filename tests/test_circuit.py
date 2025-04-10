@@ -261,16 +261,3 @@ class TestCustomizedCircuit(unittest.TestCase):
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
         circuit.clear()
-
-
-class TestLargeCircuit(unittest.TestCase):
-    """
-    Test very large circuit (i.e. to the size of a neighborhood)
-    """
-
-    def setUp(self):
-        """Set up test fixtures, if any."""
-        print("\nTest", self._testMethodName)
-
-    def tearDown(self):
-        """Tear down test fixtures, if any."""
