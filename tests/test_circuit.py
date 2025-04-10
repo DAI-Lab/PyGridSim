@@ -89,9 +89,9 @@ class TestDefaultRangeCircuit(unittest.TestCase):
 
     def test_007_export(self):
         circuit = PyGridSim()
-        circuit.update_source()
-        circuit.add_load_nodes()
-        circuit.add_lines([("source", "load0")])
+        circuit.update_source(params={"kV": 10})
+        circuit.add_load_nodes(params={"kV": 5, "kW": 10, "kvar": 2})
+        circuit.add_lines([("source", "load0")], params={"length": 2})
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"], export_path="sim.json"))
 
