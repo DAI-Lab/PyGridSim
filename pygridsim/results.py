@@ -8,20 +8,25 @@ from altdss import altdss
 
 
 def _query_solution(query):
-    match query:
-        case "Voltages":
+    query_fix = query.lower().replace(" ", "")
+    match query_fix:
+        case "voltages":
             bus_vmags = {}
             for bus_name, bus_vmag in zip(altdss.BusNames(), altdss.BusVMag()):
                 bus_vmags[bus_name] = float(bus_vmag)
             return bus_vmags
-        case "Losses":
+        case "losses":
             vector_losses = altdss.Losses()
             losses = {}
             losses["Active Power Loss"] = vector_losses.real
             losses["Reactive Power Loss"] = vector_losses.imag
             return losses
-        case "TotalPower":
-            return altdss.TotalPower()
+        case "totalpower":
+            vector_power = altdss.TotalPower()
+            power = {}
+            power["Active Power"] = vector_power.real
+            power["Reactive Power"] = vector_power.imag
+            return power
         case _:
             return "Invalid"
 
