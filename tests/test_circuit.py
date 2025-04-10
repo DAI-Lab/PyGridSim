@@ -170,7 +170,9 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit.add_lines([("source", "load0"), ("generator0", "load0")])
         circuit.solve()
         # Should be flexible with capitalization, spaces
-        queries = ["Voltages", "losses", "Total Power", "realpowerloss", "Active Power"]
+        queries = ["Voltages", "losses", "Total Power"]
+        # Add "partial" queries to just parts of losses/total power
+        queries += ["realpowerloss", "reactive Loss", "Active Power", "reactivepower"]
         print(circuit.results(queries))
 
 
