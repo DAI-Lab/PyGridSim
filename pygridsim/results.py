@@ -17,7 +17,7 @@ def _query_solution(query):
             for bus_name, bus_vmag in zip(altdss.BusNames(), altdss.BusVMag()):
                 bus_vmags[bus_name] = float(bus_vmag)
             return bus_vmags
-        case "losses":
+        case "losses" | "loss":
             losses = {}
             losses["Active Power Loss"] = vector_losses.real
             losses["Reactive Power Loss"] = vector_losses.imag
