@@ -22,7 +22,7 @@ def _query_solution(query):
             losses["Active Power Loss"] = vector_losses.real
             losses["Reactive Power Loss"] = vector_losses.imag
             return losses
-        case "totalpower":
+        case "totalpower" | "power":
             power = {}
             power["Active Power"] = vector_power.real
             power["Reactive Power"] = vector_power.imag
