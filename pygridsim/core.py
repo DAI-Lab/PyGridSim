@@ -27,13 +27,23 @@ class PyGridSim:
         self.num_transformers = 0
         self.num_pv = 0
         self.num_generators = 0
+        self.nickname_to_name = {}
         altdss.ClearAll()
         altdss('new circuit.MyCircuit')
+
+    def _check_naming(self, name):
+        if name in self.nickname_to_name:
+            raise NameError("Provided name already assigned to a node")
+        if name.startswith("load") or name.startswith(
+                "generator") or name == "source" or name.startswith("pv"):
+            raise NameError(
+                "Cannot name nodes of the format 'component + __', ambiguity with internal names")
 
     def add_load_nodes(self,
                        load_type: str = "house",
                        params: dict[str, int] = None,
-                       num: int = 1):
+                       num: int = 1,
+                       names: list[str] = None):
         """Adds Load Node(s) to circuit.
 
         Allows the user to add num load nodes,
@@ -47,14 +57,24 @@ class PyGridSim:
                 Load parameters for these manual additions. Defaults to empty dictionary.
             num (int, optional):
                 The number of loads to create with these parameters. Defaults to 1.
+            names (list(str), optional):
+                Up to num names to assign as shortcuts to the loads
 
         Returns:
             list[OpenDSS object]:
                 A list of OpenDSS objects representing the load nodes created.
         """
         params = params or dict()
+        names = names or list()
+        if len(names) > num:
+            raise ValueError("Specified more names of loads than number of nodes")
+
         load_nodes = []
-        for _ in range(num):
+        for i in range(num):
+            if (len(names) > i):
+                self._check_naming(names[i])
+                self.nickname_to_name[names[i]] = "load" + str(self.num_loads)
+
             _make_load_node(params, load_type, self.num_loads)
             self.num_loads += 1
 
@@ -106,12 +126,19 @@ class PyGridSim:
 
         PV_nodes = []
         for load in load_nodes:
+            if (load in self.nickname_to_name):
+                self.nickname_to_name[load]
+
             PV_nodes.append(_make_pv(load, params, num_panels, self.num_pv))
             self.num_pv += 1
 
         return PV_nodes
 
-    def add_generators(self, num: int = 1, gen_type: str = "small", params: dict[str, int] = None):
+    def add_generators(self,
+                       num: int = 1,
+                       gen_type: str = "small",
+                       params: dict[str, int] = None,
+                       names: list[str] = None):
         """Adds generator(s) to the system.
 
         Args:
@@ -121,14 +148,24 @@ class PyGridSim:
                 The type of generator (one of "small", "large", "industrial"). Defaults to "small".
             params (dict[str, int], optional):
                 A dictionary of parameters to configure the generator. Defaults to None.
+            names (list(str), optional):
+                Up to num names to assign as shortcuts to the generators
 
         Returns:
             list[DSS objects]:
                 A list of OpenDSS objects representing the generators created.
         """
         params = params or dict()
+        names = names or list()
+        if len(names) > num:
+            raise ValueError("Specified more names of generators than number of nodes")
+
         generators = []
-        for _ in range(num):
+        for i in range(num):
+            if (len(names) > i):
+                self._check_naming(names[i])
+                self.nickname_to_name[names[i]] = "generator" + str(self.num_generators)
+
             generators.append(_make_generator(params, gen_type, count=self.num_generators))
             self.num_generators += 1
 
@@ -159,6 +196,13 @@ class PyGridSim:
         """
         params = params or dict()
         for src, dst in connections:
+            if (src in self.nickname_to_name):
+                src = self.nickname_to_name[src]
+            if (dst in self.nickname_to_name):
+                dst = self.nickname_to_name[dst]
+            if (src == dst):
+                raise ValueError("Tried to make a line between equivalent src and dst")
+
             _make_line(src, dst, line_type, self.num_lines, params, transformer)
             self.num_lines += 1
 

@@ -162,6 +162,37 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         with self.assertRaises(Exception):
             circuit.update_source(source_type=SourceType.TURBINE)
 
+    def test_012_node_naming(self):
+        circuit = PyGridSim()
+        circuit.update_source()
+        # Create 4 nodes, only name 2 of them
+        circuit.add_load_nodes(num=4, load_type="house", names=["0", "1"])
+        circuit.add_generators(num=2, gen_type="small", names=["G0", "G1"])
+
+        # Add PVSystems to one of the nodes with shortcut
+        circuit.add_PVSystems(load_nodes=["load2", "0"])
+        # Can use original or abbreviated name
+        circuit.add_lines(connections=[("G0", "0"), ("generator1", "load1")])
+
+        with self.assertRaises(NameError):
+            # Tries to assign an already assigned name
+            circuit.add_load_nodes(num=1, names=["G1"])
+
+        with self.assertRaises(NameError):
+            # Tries to assign name to internal name load1, errors because adds ambiguity
+            circuit.add_load_nodes(num=1, names=["load1"])
+
+        with self.assertRaises(ValueError):
+            # Attempt to name 2 load nodes, but only initiating 1
+            circuit.add_load_nodes(names=["640", "641"])
+
+        with self.assertRaises(ValueError):
+            # Trying to create a line between a node and itself (nickname)
+            circuit.add_lines(connections=[("load0", "0")])
+
+        circuit.solve()
+        print(circuit.results(["Voltages", "Losses"]))
+
 
 class TestCustomizedCircuit(unittest.TestCase):
     """
