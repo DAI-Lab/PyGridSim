@@ -89,9 +89,9 @@ class TestDefaultRangeCircuit(unittest.TestCase):
 
     def test_007_export(self):
         circuit = PyGridSim()
-        circuit.update_source()
-        circuit.add_load_nodes()
-        circuit.add_lines([("source", "load0")])
+        circuit.update_source(params={"kV": 10})
+        circuit.add_load_nodes(params={"kV": 5, "kW": 10, "kvar": 2})
+        circuit.add_lines([("source", "load0")], params={"length": 2})
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"], export_path="sim.json"))
 
@@ -99,7 +99,7 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit = PyGridSim()
         circuit.update_source()
         circuit.add_load_nodes(num=2)
-        circuit.add_PVSystem(load_nodes=["load0", "load1"], num_panels=5)
+        circuit.add_PVSystems(load_nodes=["load0", "load1"], num_panels=5)
         circuit.add_lines([("source", "load0")])
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
@@ -108,7 +108,7 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit = PyGridSim()
         circuit.update_source()
         circuit.add_load_nodes()
-        circuit.add_generator(num=3, gen_type="small")
+        circuit.add_generators(num=3, gen_type="small")
         circuit.add_lines([("source", "load0"), ("generator0", "load0")])
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
@@ -117,10 +117,10 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         circuit = PyGridSim()
         circuit.update_source(source_type="powerplant")
         circuit.add_load_nodes(num=3)
-        circuit.add_PVSystem(load_nodes=["load1", "load2"], num_panels=10)
-        circuit.add_generator(num=3, gen_type="small")
-        circuit.update_source(source_type="turbine")
-        circuit.add_generator(num=4, gen_type="large")
+        circuit.add_PVSystems(load_nodes=["load1", "load2"], num_panels=10)
+        circuit.add_generators(num=3, gen_type="small")
+        circuit.update_source(source_type="turbine")  # change to a turbine source midway
+        circuit.add_generators(num=4, gen_type="large")
         circuit.add_lines([("source", "load0"), ("generator0", "load0"), ("generator5", "source")])
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
@@ -148,10 +148,10 @@ class TestDefaultRangeCircuit(unittest.TestCase):
 
         # GENERATOR CONFIG
         # works, because not case sensitive
-        circuit.add_generator(num=3, gen_type="SMALl")
+        circuit.add_generators(num=3, gen_type="SMALl")
         # don't want linetype input, just string
         with self.assertRaises(Exception):
-            circuit.add_generator(num=3, gen_type=GeneratorType.SMALL)
+            circuit.add_generators(num=3, gen_type=GeneratorType.SMALL)
 
         # SOURCE CONFIG
         # works, because not case sensitive
@@ -210,9 +210,9 @@ class TestCustomizedCircuit(unittest.TestCase):
         # add load nodes so we can test pv system erroring
         circuit.add_load_nodes(num=2, params={"kV": 10, "kW": 20, "kvar": 1})
         with self.assertRaises(KeyError):
-            circuit.add_generator(num=4, params={"badParam": 100})
+            circuit.add_generators(num=4, params={"badParam": 100})
         with self.assertRaises(KeyError):
-            circuit.add_PVSystem(load_nodes=["load0"], params={"badParam": 100}, num_panels=4)
+            circuit.add_PVSystems(load_nodes=["load0"], params={"badParam": 100}, num_panels=4)
 
     def test_102_negative_inputs(self):
         """
@@ -243,3 +243,21 @@ class TestCustomizedCircuit(unittest.TestCase):
         circuit = PyGridSim()
         with self.assertRaises(TypeError):
             circuit.add_load_nodes(params={"kV": "stringInput"})
+
+    def test_105_alt_source_parameters(self):
+        circuit = PyGridSim()
+        circuit.add_load_nodes(num=5)
+        circuit.add_generators(params={"kV": 50, "kW": 100})
+        circuit.add_PVSystems(load_nodes=["load0", "load1"], num_panels=5, params={"kV": 0.1})
+        circuit.solve()
+        print(circuit.results(["Voltages", "Losses"]))
+        circuit.clear()
+
+    def test_106_transformer_parameters(self):
+        circuit = PyGridSim()
+        circuit.add_load_nodes(num=5)
+        circuit.update_source()
+        circuit.add_lines([("source", "load0")], params={"length": 20, "XHL": 5})
+        circuit.solve()
+        print(circuit.results(["Voltages", "Losses"]))
+        circuit.clear()

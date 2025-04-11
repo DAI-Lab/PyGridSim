@@ -81,10 +81,8 @@ class PyGridSim:
         params = params or dict()
         return _make_source_node(params, source_type)
 
-    def add_PVSystem(self,
-                     load_nodes: list[str],
-                     params: dict[str, int] = None,
-                     num_panels: int = 1):
+    def add_PVSystems(self, load_nodes: list[str],
+                      params: dict[str, int] = None, num_panels: int = 1):
         """Adds a photovoltaic (PV) system to the specified load nodes.
 
         Adds PV system with num_panels to each of the listed load nodes.
@@ -113,7 +111,7 @@ class PyGridSim:
 
         return PV_nodes
 
-    def add_generator(self, num: int = 1, gen_type: str = "small", params: dict[str, int] = None):
+    def add_generators(self, num: int = 1, gen_type: str = "small", params: dict[str, int] = None):
         """Adds generator(s) to the system.
 
         Args:
