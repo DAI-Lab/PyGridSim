@@ -13,33 +13,30 @@
 
 # PyGridSim
 
-Package to simulate OpenDSS circuits on Python.
-
-NOTE: README comes from dai cookie cutter, will be updated
-NOTE: will be moved to Dai lab repository
+PyGridSim is a package with the goal of simulating OpenDSS circuits on Python. PyGridSim uses a functional interface to allow users to efficiently generate circuits of various scopes.
 
 - Documentation: https://amzhao.github.io/PyGridSim
 - Homepage: https://github.com/amzhao/PyGridSim
 
 # Overview
 
-PyGridSim aims to provide accessible access to tools like OpenDSS, AltDSS using Python. The goal is to create large-scale electrical circuits representing residential neighborhoods (and other scenarios) using an intuitive interface, without any background in OpenDSS software.
+PyGridSim allows user to create circuits with the amount of customization they desire. Thus, users can either fully specify each component they add to the circuit, or lean on library-provided parameter sets. PyGridSim supports the batch creation of every circuit component, emphasizing scalability and efficiently in building large circuits.
 
 # Install
 
 ## Requirements
 
-**PyGridSim** has been developed and tested on [Python 3.5, 3.6, 3.7 and 3.8](https://www.python.org/downloads/)
+**PyGridSim** has been developed and tested on [Python 3.10, 3.11 and 3.12](https://www.python.org/downloads/)
 
 Also, although it is not strictly required, the usage of a [virtualenv](https://virtualenv.pypa.io/en/latest/)
 is highly recommended in order to avoid interfering with other software installed in the system
 in which **PyGridSim** is run.
 
-These are the minimum commands needed to create a virtualenv using python3.6 for **PyGridSim**:
+These are the minimum commands needed to create a virtualenv using python3.10 for **PyGridSim**:
 
 ```bash
 pip install virtualenv
-virtualenv -p $(which python3.6) PyGridSim-venv
+virtualenv -p $(which python3.10) PyGridSim-venv
 ```
 
 Afterwards, you have to execute this command to activate the virtualenv:
@@ -75,23 +72,8 @@ git checkout stable
 make install
 ```
 
-## Install for Development
-
-If you want to contribute to the project, a few more steps are required to make the project ready
-for development.
-
-Please head to the [Contributing Guide](https://amzhao.github.io/PyGridSim/contributing.html#get-started)
-for more details about this process.
-
-# Quickstart
-
-In this short tutorial we will guide you through a series of steps that will help you
-getting started with **PyGridSim**.
-
-TODO: Create a step by step guide here. Also figure out how to ensure prerequisites properly.
-
 # What's next?
 
 For more details about **PyGridSim** and all its possibilities
 and features, please check the [documentation site](
-https://amzhao.github.io/PyGridSim/).
+TODO: gitbool link).
