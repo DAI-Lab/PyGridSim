@@ -162,6 +162,19 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         with self.assertRaises(Exception):
             circuit.update_source(source_type=SourceType.TURBINE)
 
+    def test_012_all_results(self):
+        circuit = PyGridSim()
+        circuit.update_source()
+        circuit.add_load_nodes()
+        circuit.add_generators(num=2, gen_type="small")
+        circuit.add_lines([("source", "load0"), ("generator0", "load0")])
+        circuit.solve()
+        # Should be flexible with capitalization, spaces
+        queries = ["Voltages", "losses", "Total Power"]
+        # Add "partial" queries to just parts of losses/total power
+        queries += ["realpowerloss", "reactive Loss", "Active Power", "reactivepower"]
+        print(circuit.results(queries))
+
 
 class TestCustomizedCircuit(unittest.TestCase):
     """

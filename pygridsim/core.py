@@ -179,7 +179,9 @@ class PyGridSim:
 
         Args:
             queries (list[str]):
-                A list of queries to the circuit ("Voltages", "Losses", "TotalPower")
+                A list of queries to the circuit: one of ("Voltages", "Losses", "TotalPower")
+                or partial queries ("RealLoss", "ReactiveLoss", "RealPower", "ReactivePower")
+                that query one component of Losses/TotalPower
             export_path (str, optional):
                 The file path to export results. If empty, results are not exported.
                 Defaults to "".
