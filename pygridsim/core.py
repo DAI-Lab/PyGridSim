@@ -17,11 +17,15 @@ class PyGridSim:
         Stores numbers of circuit components to ensure unique naming of repeat circuit components.
 
         Attributes:
-            counts (dict[str, int]): Map of each type to the number seen of that type so far
+            num_generators (int): Number of generators created so far.
+            num_lines (int): Number of lines created so far.
+            num_loads (int): Number of load nodes created so far.
+            num_pv (int): Number of PVSystems create so far.
         """
-        self.counts = {}
-        for count_type in ["loads", "lines", "transformers", "pv", "generators"]:
-            self.counts[count_type] = 0
+        self.num_generators = 0
+        self.num_lines = 0
+        self.num_loads = 0
+        self.num_pv = 0
 
         altdss.ClearAll()
         altdss('new circuit.MyCircuit')
@@ -52,8 +56,8 @@ class PyGridSim:
         params = params or dict()
         load_nodes = []
         for _ in range(num):
-            _make_load_node(params, load_type, self.counts["loads"])
-            self.counts["loads"] += 1
+            _make_load_node(params, load_type, self.num_loads)
+            self.num_loads += 1
 
         return load_nodes
 
@@ -105,8 +109,8 @@ class PyGridSim:
 
         PV_nodes = []
         for load in load_nodes:
-            PV_nodes.append(_make_pv(load, params, num_panels, self.counts["pv"]))
-            self.counts["pv"] += 1
+            PV_nodes.append(_make_pv(load, params, num_panels, self.num_pv))
+            self.num_pv += 1
 
         return PV_nodes
 
@@ -128,8 +132,8 @@ class PyGridSim:
         params = params or dict()
         generators = []
         for _ in range(num):
-            generators.append(_make_generator(params, gen_type, count=self.counts["generators"]))
-            self.counts["generators"] += 1
+            generators.append(_make_generator(params, gen_type, count=self.num_generators))
+            self.num_generators += 1
 
         return generators
 
@@ -158,8 +162,8 @@ class PyGridSim:
         """
         params = params or dict()
         for src, dst in connections:
-            _make_line(src, dst, line_type, self.counts["lines"], params, transformer)
-            self.counts["lines"] += 1
+            _make_line(src, dst, line_type, self.num_lines, params, transformer)
+            self.num_lines += 1
 
     def solve(self):
         """Solves the OpenDSS circuit.
@@ -203,8 +207,6 @@ class PyGridSim:
             None
         """
         altdss.ClearAll()
-        for key in self.counts:
-            self.counts[key] = 0
 
     def get_types(self, component: str, show_ranges: bool = False):
         """Provides list of all supported Load Types
