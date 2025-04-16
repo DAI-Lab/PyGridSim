@@ -82,10 +82,8 @@ class PyGridSim:
         params = params or dict()
         return _make_source_node(params, source_type)
 
-    def add_PVSystem(self,
-                     load_nodes: list[str],
-                     params: dict[str, int] = None,
-                     num_panels: int = 1):
+    def add_PVSystems(self, load_nodes: list[str],
+                      params: dict[str, int] = None, num_panels: int = 1):
         """Adds a photovoltaic (PV) system to the specified load nodes.
 
         Adds PV system with num_panels to each of the listed load nodes.
@@ -114,7 +112,7 @@ class PyGridSim:
 
         return PV_nodes
 
-    def add_generator(self, num: int = 1, gen_type: str = "small", params: dict[str, int] = None):
+    def add_generators(self, num: int = 1, gen_type: str = "small", params: dict[str, int] = None):
         """Adds generator(s) to the system.
 
         Args:
@@ -182,7 +180,9 @@ class PyGridSim:
 
         Args:
             queries (list[str]):
-                A list of queries to the circuit ("Voltages", "Losses", "TotalPower")
+                A list of queries to the circuit: one of ("Voltages", "Losses", "TotalPower")
+                or partial queries ("RealLoss", "ReactiveLoss", "RealPower", "ReactivePower")
+                that query one component of Losses/TotalPower
             export_path (str, optional):
                 The file path to export results. If empty, results are not exported.
                 Defaults to "".

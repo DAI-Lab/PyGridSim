@@ -41,9 +41,7 @@ def _make_line(src, dst, line_type, count, params={}, transformer=True):
     transformer.Windings = defaults.NUM_WINDINGS
     transformer.XHL = _get_param(params, "XHL", defaults.XHL)
     transformer.Buses = [src, dst]
-    transformer.Conns = _get_param(params, "Conns",
-                                   [defaults.PRIMARY_CONN, defaults.SECONDARY_CONN])
-
+    transformer.Conns = [defaults.PRIMARY_CONN, defaults.SECONDARY_CONN]
     transformer.kVs = [_get_kv(src), _get_kv(dst)]
 
     transformer.end_edit()
