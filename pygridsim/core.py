@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from altdss import altdss
 
+from pygridsim.configs import NAME_TO_CONFIG
 from pygridsim.lines import _make_line
 from pygridsim.parameters import _make_generator, _make_load_node, _make_pv, _make_source_node
 from pygridsim.results import _export_results, _query_solution
@@ -16,17 +17,16 @@ class PyGridSim:
         Stores numbers of circuit components to ensure unique naming of repeat circuit components.
 
         Attributes:
-            num_loads (int): Number of loads in circuit so far.
-            num_lines (int): Number of lines in circuit so far.
-            num_transformers (int): Number of transformers in circuit so far.
-            num_pv (int): Number of PV systems in circuit so far.
-            num_generators (int): Number generators in circuit so far.
+            num_generators (int): Number of generators created so far.
+            num_lines (int): Number of lines created so far.
+            num_loads (int): Number of load nodes created so far.
+            num_pv (int): Number of PVSystems create so far.
         """
-        self.num_loads = 0
-        self.num_lines = 0
-        self.num_transformers = 0
-        self.num_pv = 0
         self.num_generators = 0
+        self.num_lines = 0
+        self.num_loads = 0
+        self.num_pv = 0
+
         altdss.ClearAll()
         altdss('new circuit.MyCircuit')
 
@@ -52,6 +52,7 @@ class PyGridSim:
             list[OpenDSS object]:
                 A list of OpenDSS objects representing the load nodes created.
         """
+
         params = params or dict()
         load_nodes = []
         for _ in range(num):
@@ -206,6 +207,37 @@ class PyGridSim:
             None
         """
         altdss.ClearAll()
-        self.num_loads = 0
-        self.num_lines = 0
-        self.num_transformers = 0
+
+    def get_types(self, component: str, show_ranges: bool = False):
+        """Provides list of all supported Load Types
+
+        Args:
+            component (str):
+                Which component to get, one of (one of "load", "source", "pv", "line")
+            show_ranges (bool, optional):
+                Whether to show all configuration ranges in output.
+
+        Returns:
+            list:
+                A list containing all load types, if show_ranges False.
+                A list of tuples showing all load types and configurations, if show_ranges True.
+        """
+        component_simplified = component.lower().replace(" ", "")
+        if (component_simplified[-1] == "s"):
+            component_simplified = component_simplified[:-1]
+        configuration = {}
+        if component_simplified in NAME_TO_CONFIG:
+            configuration = NAME_TO_CONFIG[component_simplified]
+        else:
+            raise KeyError(
+                f"Invalid component input: expect one of {[name for name in NAME_TO_CONFIG]}")
+
+        if not show_ranges:
+            return [component_type.value for component_type in configuration]
+
+        component_types = []
+        for component_type in configuration:
+            config_dict = configuration[component_type]
+            component_types.append((component_type.value, config_dict))
+
+        return component_types

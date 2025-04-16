@@ -274,3 +274,25 @@ class TestCustomizedCircuit(unittest.TestCase):
         circuit.solve()
         print(circuit.results(["Voltages", "Losses"]))
         circuit.clear()
+
+
+class TestTypeQueryFunctions(unittest.TestCase):
+
+    def setUp(self):
+        """Set up test fixtures, if any."""
+        print("\nTest", self._testMethodName)
+
+    def tearDown(self):
+        """Tear down test fixtures, if any."""
+
+    def test_200_type_queries(self):
+        circuit = PyGridSim()
+        # should still work if plural, capitalized, spaces
+        for component in ["load ", "sources", "Line", "GENERATOR"]:
+            print(circuit.get_types(component))
+            print(circuit.get_types(component, show_ranges=True))
+
+    def test_200_invalid_type_quer(self):
+        circuit = PyGridSim()
+        with self.assertRaises(KeyError):
+            circuit.get_types("bad_component_name")

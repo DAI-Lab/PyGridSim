@@ -66,3 +66,10 @@ GENERATOR_CONFIGURATIONS = {
         "kW": defaults.INDUSTRIAL_GEN_KW,
     }
 }
+
+NAME_TO_CONFIG = {
+    "load": LOAD_CONFIGURATIONS,
+    "source": SOURCE_CONFIGURATIONS,
+    "generator": GENERATOR_CONFIGURATIONS,
+    "line": LINE_CONFIGURATIONS
+}
