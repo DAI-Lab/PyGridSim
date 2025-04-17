@@ -277,13 +277,14 @@ class TestCustomizedCircuit(unittest.TestCase):
 
 
     def test_107_transformer_kva_customization(self):
-        circuit = PyGridSim()
-        circuit.add_load_nodes(params={"kV": 0.12, "kW": 1, "kvar": 1})
-        circuit.update_source(params={"kV": 0.5})
-        circuit.add_lines([("source", "load0")], params={"length": 1, "kVA": 0.001})
-        circuit.solve()
-        print(circuit.results(["Voltages", "Losses"]))
-        circuit.clear()
+        for kva in [0.001, 0.1, 10]:
+            circuit = PyGridSim()
+            circuit.add_load_nodes(params={"kV": 0.12, "kW": 1, "kvar": 1})
+            circuit.update_source(params={"kV": 0.5})
+            circuit.add_lines([("source", "load0")], params={"length": 1, "kVA": kva})
+            circuit.solve()
+            print(circuit.results(["Voltages", "Losses"]))
+            circuit.clear()
 
 
 class TestTypeQueryFunctions(unittest.TestCase):
