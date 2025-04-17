@@ -64,6 +64,7 @@ NUM_WINDINGS = 2
 XHL = 2
 PRIMARY_CONN = Connection.delta
 SECONDARY_CONN = Connection.wye
+KVA_MULTIPLIER = 1.5
 
 """
 Valid parameter lists
@@ -72,6 +73,6 @@ IMPEDANCE_PARAMS = ["R0", "R1", "X0", "X1"]
 
 VALID_LOAD_PARAMS = ["kV", "kW", "kvar", "phases"]
 VALID_SOURCE_PARAMS = ["kV", "phases", "frequency"] + IMPEDANCE_PARAMS
-VALID_LINE_TRANSFORMER_PARAMS = ["length", "XHL", "Conns"]
+VALID_LINE_TRANSFORMER_PARAMS = ["length", "XHL", "Conns", "kVA"]
 VALID_PV_PARAMS = ["kV", "phases"]
 VALID_GENERATOR_PARAMS = ["kV", "kW", "phases"]

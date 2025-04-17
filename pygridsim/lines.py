@@ -16,8 +16,7 @@ def _get_kv(node_name):
         return altdss.Generator[node_name].kV
     else:
         raise KeyError("Invalid src or dst name")
-
-
+    
 def _make_line(src, dst, line_type, count, params={}, transformer=True):
     _check_valid_params(params, defaults.VALID_LINE_TRANSFORMER_PARAMS)
     line_type_obj = _get_enum_obj(LineType, line_type)
@@ -43,5 +42,5 @@ def _make_line(src, dst, line_type, count, params={}, transformer=True):
     transformer.Buses = [src, dst]
     transformer.Conns = [defaults.PRIMARY_CONN, defaults.SECONDARY_CONN]
     transformer.kVs = [_get_kv(src), _get_kv(dst)]
-
+    transformer.kVAs = [_get_param(params, "kVA", min(_get_kv(src), _get_kv(dst))*defaults.KVA_MULTIPLIER)]*2
     transformer.end_edit()
