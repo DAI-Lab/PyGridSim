@@ -275,7 +275,6 @@ class TestCustomizedCircuit(unittest.TestCase):
         print(circuit.results(["Voltages", "Losses"]))
         circuit.clear()
 
-
     def test_107_transformer_kva_customization(self):
         for kva in [0.001, 0.1, 10]:
             circuit = PyGridSim()
