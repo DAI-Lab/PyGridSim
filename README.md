@@ -13,7 +13,7 @@
 
 # PyGridSim
 
-PyGridSim is a package with the goal of simulating OpenDSS circuits on Python. PyGridSim uses a functional interface to allow users to efficiently generate circuits of various scopes.
+PyGridSim is a package that allows user to simulating OpenDSS circuits with Python. PyGridSim uses a functional interface to allow users to efficiently generate circuits of various scopes.
 
 - Documentation: https://amzhao.github.io/PyGridSim
 - Homepage: https://github.com/amzhao/PyGridSim
@@ -22,7 +22,7 @@ PyGridSim is a package with the goal of simulating OpenDSS circuits on Python. P
 
 PyGridSim allows user to create circuits with the amount of customization they desire. Thus, users can either fully specify each component they add to the circuit, or lean on library-provided parameter sets. PyGridSim supports the batch creation of every circuit component, emphasizing scalability and efficiently in building large circuits.
 
-# Install
+# Installation
 
 ## Requirements
 
@@ -72,8 +72,44 @@ git checkout stable
 make install
 ```
 
-# What's next?
+# Quick Start
+Users of PyGridSim have the option between creating a fully customized circuit and using PyGridSim-provided parameters to build their circuit. Consider the simplest circuit: one source, one load, and a line connecting them. The following code snippet demonstrates how to model and print results on this circuit on PyGridSim with both methods.
+
+## Customized Circuit Creation
+```python
+circuit = PyGridSim()
+
+# Add Custom Source and Load
+circuit.add_load_nodes(params={"kV": 0.12, "kW": 1, "kvar": 1})
+circuit.update_source(params={"kV": 0.5})
+
+# Add Line
+circuit.add_lines([("source", "load0")], params={"length": 1})
+
+# Solve and Print Results
+circuit.solve()
+print(circuit.results(["Voltages", "Losses"]))
+circuit.clear()
+```
+
+## Defaults-Based Circuit Creation
+```python
+circuit = PyGridSim()
+
+# Add Custom Source and Load
+circuit.add_load_nodes(load_type="house")
+circuit.update_source(source_type="turbine")
+
+# Add Line
+circuit.add_lines([("source", "load0")], line_type="lv")
+
+# Solve and Print Results
+circuit.solve()
+print(circuit.results(["Voltages", "Losses"]))
+circuit.clear()
+```
+
+# Resources
 
 For more details about **PyGridSim** and all its possibilities
-and features, please check the [documentation site](
-TODO: gitbool link).
+and features, please check the [Gitbook page for PyGridSim](https://dtail.gitbook.io/pygridsim)
