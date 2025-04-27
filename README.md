@@ -4,8 +4,10 @@
 </p>
 
 <!-- Uncomment these lines after releasing the package to PyPI for version and downloads badges -->
-<!--[![PyPI Shield](https://img.shields.io/pypi/v/pygridsim.svg)](https://pypi.python.org/pypi/pygridsim)-->
-<!--[![Downloads](https://pepy.tech/badge/pygridsim)](https://pepy.tech/project/pygridsim)-->
+[![Development Status](https://img.shields.io/badge/Development%20Status-2%20--%20Pre--Alpha-yellow)](https://pypi.org/search/?c=Development+Status+%3A%3A+2+-+Pre-Alpha)
+[![PyPI Shield](https://img.shields.io/pypi/v/pygridsim.svg)](https://pypi.python.org/pypi/pygridsim)
+[![Downloads](https://pepy.tech/badge/pygridsim)](https://pepy.tech/project/pygridsim)
+[![Run Tests](https://github.com/DAI-Lab/PyGridSim/actions/workflows/tests.yml/badge.svg)](https://github.com/DAI-Lab/PyGridSim/actions/workflows/tests.yml)
 [![Github Actions Shield](https://img.shields.io/github/workflow/status/amzhao/PyGridSim/Run%20Tests)](https://github.com/amzhao/PyGridSim/actions)
 [![Coverage Status](https://codecov.io/gh/amzhao/PyGridSim/branch/master/graph/badge.svg)](https://codecov.io/gh/amzhao/PyGridSim)
 
@@ -13,14 +15,14 @@
 
 # PyGridSim
 
-PyGridSim is a package that allows user to simulating OpenDSS circuits with Python. PyGridSim uses a functional interface to allow users to efficiently generate circuits of various scopes.
+PyGridSim is a package for simulating OpenDSS circuits. PyGridSim uses a functional interface to allow users to efficiently generate circuits of various scopes.
 
-- Documentation: https://amzhao.github.io/PyGridSim
-- Homepage: https://github.com/amzhao/PyGridSim
+- Documentation: https://dtail.gitbook.io/pygridsim
+- Homepage: https://dai.lids.mit.edu/
 
 # Overview
 
-PyGridSim allows user to create circuits with the amount of customization they desire. Thus, users can either fully specify each component they add to the circuit, or lean on library-provided parameter sets. PyGridSim supports the batch creation of every circuit component, emphasizing scalability and efficiently in building large circuits.
+PyGridSim allows users to create and customize circuits. Users can either fully specify each component they add to the circuit, or lean on library-provided parameter sets. PyGridSim supports the batch creation of every circuit component, emphasizing scalability and efficiently in building large circuits.
 
 # Installation
 
