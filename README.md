@@ -8,17 +8,13 @@
 [![PyPI Shield](https://img.shields.io/pypi/v/pygridsim.svg)](https://pypi.python.org/pypi/pygridsim)
 [![Downloads](https://pepy.tech/badge/pygridsim)](https://pepy.tech/project/pygridsim)
 [![Run Tests](https://github.com/DAI-Lab/PyGridSim/actions/workflows/tests.yml/badge.svg)](https://github.com/DAI-Lab/PyGridSim/actions/workflows/tests.yml)
-[![Github Actions Shield](https://img.shields.io/github/workflow/status/amzhao/PyGridSim/Run%20Tests)](https://github.com/amzhao/PyGridSim/actions)
-[![Coverage Status](https://codecov.io/gh/amzhao/PyGridSim/branch/master/graph/badge.svg)](https://codecov.io/gh/amzhao/PyGridSim)
-
-
 
 # PyGridSim
 
 PyGridSim is a package for simulating OpenDSS circuits. PyGridSim uses a functional interface to allow users to efficiently generate circuits of various scopes.
 
 - Documentation: https://dtail.gitbook.io/pygridsim
-- Homepage: https://dai.lids.mit.edu/
+- Homepage: https://github.com/DAI-Lab/PyGridSim/ 
 
 # Overview
 
