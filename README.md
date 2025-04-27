@@ -94,6 +94,13 @@ print(circuit.results(["Voltages", "Losses"]))
 circuit.clear()
 ```
 
+Running this code yields the following printed output:
+```
+{'Voltages': {'source': 499.7123955784113, 'load0': 120.73408045756985}, 'Losses': {'Active Power Loss': 465617.30157676246, 'Reactive Power Loss': 969502.2898991327}}
+```
+
+Note that the losses here are expressed in Watts, and the Voltages in Volts. The circuit observes some loss due to a much higher source voltage than load voltage, with most of the loss being reactive power loss. The circuit is created with a step-down transformer in the line by default, which enables the source and load to maintain isolated voltage levels at rest.
+
 ## Defaults-Based Circuit Creation
 ```python
 circuit = PyGridSim()
@@ -110,6 +117,13 @@ circuit.solve()
 print(circuit.results(["Voltages", "Losses"]))
 circuit.clear()
 ```
+
+The following output is printed:
+```
+{'Voltages': {'source': 2418.845494533779, 'load0': 169.53107121049976}, 'Losses': {'Active Power Loss': 351310.95859906287, 'Reactive Power Loss': 730351.7183868886}}
+```
+
+The defaults-based ranges for source and load nodes are higher than the ones specified in the above customization example, explaining the higher voltages set for both nodes. We once again observe some loss in the system, with most of that being in reactive power loss.
 
 # Resources
 
