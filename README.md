@@ -75,6 +75,7 @@ Users of PyGridSim have the option between creating a fully customized circuit a
 
 ## Customized Circuit Creation
 ```python
+from pygridsim import PyGridSim
 circuit = PyGridSim()
 
 # Add Custom Source and Load
@@ -99,6 +100,7 @@ Note that the losses here are expressed in Watts, and the Voltages in Volts. The
 
 ## Defaults-Based Circuit Creation
 ```python
+from pygridsim import PyGridSim
 circuit = PyGridSim()
 
 # Add Custom Source and Load
