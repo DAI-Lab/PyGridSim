@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from altdss import altdss
 
+from pygridsim.defaults import RESERVED_PREFIXES
 from pygridsim.lines import _make_line
 from pygridsim.parameters import _make_generator, _make_load_node, _make_pv, _make_source_node
 from pygridsim.results import _export_results, _query_solution
-from pygridsim.defaults import RESERVED_PREFIXES
 
 """Main module."""
 
