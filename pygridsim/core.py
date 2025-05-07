@@ -4,6 +4,7 @@ from altdss import altdss
 from pygridsim.lines import _make_line
 from pygridsim.parameters import _make_generator, _make_load_node, _make_pv, _make_source_node
 from pygridsim.results import _export_results, _query_solution
+from pygridsim.defaults import RESERVED_PREFIXES
 
 """Main module."""
 
@@ -21,6 +22,7 @@ class PyGridSim:
             num_transformers (int): Number of transformers in circuit so far.
             num_pv (int): Number of PV systems in circuit so far.
             num_generators (int): Number generators in circuit so far.
+            nickname_to_name (dict[str, str]): Map containing nicknames to their internal names.
         """
         self.num_loads = 0
         self.num_lines = 0
@@ -33,10 +35,9 @@ class PyGridSim:
 
     def _check_naming(self, name):
         if name in self.nickname_to_name:
-            raise NameError("Provided name already assigned to a node")
-        if name.startswith("load") or name.startswith(
-                "generator") or name == "source" or name.startswith("pv"):
-            raise NameError(
+            raise ValueError("Provided name already assigned to a node")
+        if any(name.startswith(prefix) for prefix in RESERVED_PREFIXES):
+            raise ValueError(
                 "Cannot name nodes of the format 'component + __', ambiguity with internal names")
 
     def add_load_nodes(self,
@@ -127,7 +128,7 @@ class PyGridSim:
         PV_nodes = []
         for load in load_nodes:
             if (load in self.nickname_to_name):
-                self.nickname_to_name[load]
+                load = self.nickname_to_name[load]
 
             PV_nodes.append(_make_pv(load, params, num_panels, self.num_pv))
             self.num_pv += 1

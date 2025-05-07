@@ -174,11 +174,11 @@ class TestDefaultRangeCircuit(unittest.TestCase):
         # Can use original or abbreviated name
         circuit.add_lines(connections=[("G0", "0"), ("generator1", "load1")])
 
-        with self.assertRaises(NameError):
+        with self.assertRaises(ValueError):
             # Tries to assign an already assigned name
             circuit.add_load_nodes(num=1, names=["G1"])
 
-        with self.assertRaises(NameError):
+        with self.assertRaises(ValueError):
             # Tries to assign name to internal name load1, errors because adds ambiguity
             circuit.add_load_nodes(num=1, names=["load1"])
 
