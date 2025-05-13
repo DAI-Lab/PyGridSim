@@ -23,7 +23,6 @@ class PyGridSim:
             num_pv (int): Number of PV systems in circuit so far.
             num_generators (int): Number generators in circuit so far.
             nickname_to_name (dict[str, str]): Map from nicknames to their internal names.
-            name_to_nickname (dict[str, str]): Map from internal names to nicknames.
         """
         self.num_loads = 0
         self.num_lines = 0
@@ -31,7 +30,6 @@ class PyGridSim:
         self.num_pv = 0
         self.num_generators = 0
         self.nickname_to_name = {}
-        self.name_to_nickname = {}
         altdss.ClearAll()
         altdss('new circuit.MyCircuit')
 
@@ -78,7 +76,6 @@ class PyGridSim:
                 self._check_naming(names[i])
                 internal_name = "load" + str(self.num_loads)
                 self.nickname_to_name[names[i]] = internal_name
-                self.name_to_nickname[internal_name] = names[i]
 
             _make_load_node(params, load_type, self.num_loads)
             self.num_loads += 1
@@ -171,7 +168,6 @@ class PyGridSim:
                 self._check_naming(names[i])
                 internal_name = "generator" + str(self.num_generators)
                 self.nickname_to_name[names[i]] = internal_name
-                self.name_to_nickname[internal_name] = names[i]
 
             generators.append(_make_generator(params, gen_type, count=self.num_generators))
             self.num_generators += 1
@@ -223,6 +219,9 @@ class PyGridSim:
         """
         altdss.Solution.Solve()
 
+    def _get_name_to_nickname(self):
+        return {v: k for k, v in self.nickname_to_name.items()}
+
     def results(self, queries: list[str], export_path=""):
         """Gets simulation results based on specified queries.
 
@@ -241,7 +240,7 @@ class PyGridSim:
         """
         results = {}
         for query in queries:
-            results[query] = _query_solution(query, self.name_to_nickname)
+            results[query] = _query_solution(query, self._get_name_to_nickname())
 
         if (export_path):
             _export_results(results, export_path)
