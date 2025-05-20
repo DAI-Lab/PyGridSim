@@ -75,3 +75,5 @@ VALID_SOURCE_PARAMS = ["kV", "phases", "frequency"] + IMPEDANCE_PARAMS
 VALID_LINE_TRANSFORMER_PARAMS = ["length", "XHL", "Conns"]
 VALID_PV_PARAMS = ["kV", "phases"]
 VALID_GENERATOR_PARAMS = ["kV", "kW", "phases"]
+
+RESERVED_PREFIXES = ["load", "generator", "pv", "source"]

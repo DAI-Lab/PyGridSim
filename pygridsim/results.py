@@ -7,7 +7,7 @@ import json
 from altdss import altdss
 
 
-def _query_solution(query):
+def _query_solution(query, name_to_nickname):
     query_fix = query.lower().replace(" ", "")
     vector_losses = altdss.Losses()
     vector_power = altdss.TotalPower()
@@ -15,7 +15,11 @@ def _query_solution(query):
         case "voltages":
             bus_vmags = {}
             for bus_name, bus_vmag in zip(altdss.BusNames(), altdss.BusVMag()):
-                bus_vmags[bus_name] = float(bus_vmag)
+                return_name = bus_name
+                if bus_name in name_to_nickname:
+                    nickname = name_to_nickname[bus_name]
+                    return_name += "/" + nickname
+                bus_vmags[return_name] = float(bus_vmag)
             return bus_vmags
         case "losses" | "loss":
             losses = {}

@@ -2,6 +2,7 @@
 from altdss import altdss
 
 from pygridsim.configs import NAME_TO_CONFIG
+from pygridsim.defaults import RESERVED_PREFIXES
 from pygridsim.lines import _make_line
 from pygridsim.parameters import _make_generator, _make_load_node, _make_pv, _make_source_node
 from pygridsim.results import _export_results, _query_solution
@@ -17,23 +18,34 @@ class PyGridSim:
         Stores numbers of circuit components to ensure unique naming of repeat circuit components.
 
         Attributes:
-            num_generators (int): Number of generators created so far.
-            num_lines (int): Number of lines created so far.
-            num_loads (int): Number of load nodes created so far.
-            num_pv (int): Number of PVSystems create so far.
+            num_loads (int): Number of loads in circuit so far.
+            num_lines (int): Number of lines in circuit so far.
+            num_transformers (int): Number of transformers in circuit so far.
+            num_pv (int): Number of PV systems in circuit so far.
+            num_generators (int): Number generators in circuit so far.
+            nickname_to_name (dict[str, str]): Map from nicknames to their internal names.
         """
         self.num_generators = 0
         self.num_lines = 0
         self.num_loads = 0
         self.num_pv = 0
+        self.nickname_to_name = {}
 
         altdss.ClearAll()
         altdss('new circuit.MyCircuit')
 
+    def _check_naming(self, name):
+        if name in self.nickname_to_name:
+            raise ValueError("Provided name already assigned to a node")
+        if any(name.startswith(prefix) for prefix in RESERVED_PREFIXES):
+            raise ValueError(
+                "Cannot name nodes of the format 'component + __', ambiguity with internal names")
+
     def add_load_nodes(self,
                        load_type: str = "house",
                        params: dict[str, int] = None,
-                       num: int = 1):
+                       num: int = 1,
+                       names: list[str] = None):
         """Adds Load Node(s) to circuit.
 
         Allows the user to add num load nodes,
@@ -47,6 +59,8 @@ class PyGridSim:
                 Load parameters for these manual additions. Defaults to empty dictionary.
             num (int, optional):
                 The number of loads to create with these parameters. Defaults to 1.
+            names (list(str), optional):
+                Up to num names to assign as shortcuts to the loads
 
         Returns:
             list[OpenDSS object]:
@@ -54,8 +68,17 @@ class PyGridSim:
         """
 
         params = params or dict()
+        names = names or list()
+        if len(names) > num:
+            raise ValueError("Specified more names of loads than number of nodes")
+
         load_nodes = []
-        for _ in range(num):
+        for i in range(num):
+            if (len(names) > i):
+                self._check_naming(names[i])
+                internal_name = "load" + str(self.num_loads)
+                self.nickname_to_name[names[i]] = internal_name
+
             _make_load_node(params, load_type, self.num_loads)
             self.num_loads += 1
 
@@ -107,12 +130,19 @@ class PyGridSim:
 
         PV_nodes = []
         for load in load_nodes:
+            if (load in self.nickname_to_name):
+                load = self.nickname_to_name[load]
+
             PV_nodes.append(_make_pv(load, params, num_panels, self.num_pv))
             self.num_pv += 1
 
         return PV_nodes
 
-    def add_generators(self, num: int = 1, gen_type: str = "small", params: dict[str, int] = None):
+    def add_generators(self,
+                       num: int = 1,
+                       gen_type: str = "small",
+                       params: dict[str, int] = None,
+                       names: list[str] = None):
         """Adds generator(s) to the system.
 
         Args:
@@ -122,14 +152,25 @@ class PyGridSim:
                 The type of generator (one of "small", "large", "industrial"). Defaults to "small".
             params (dict[str, int], optional):
                 A dictionary of parameters to configure the generator. Defaults to None.
+            names (list(str), optional):
+                Up to num names to assign as shortcuts to the generators
 
         Returns:
             list[DSS objects]:
                 A list of OpenDSS objects representing the generators created.
         """
         params = params or dict()
+        names = names or list()
+        if len(names) > num:
+            raise ValueError("Specified more names of generators than number of nodes")
+
         generators = []
-        for _ in range(num):
+        for i in range(num):
+            if (len(names) > i):
+                self._check_naming(names[i])
+                internal_name = "generator" + str(self.num_generators)
+                self.nickname_to_name[names[i]] = internal_name
+
             generators.append(_make_generator(params, gen_type, count=self.num_generators))
             self.num_generators += 1
 
@@ -160,6 +201,13 @@ class PyGridSim:
         """
         params = params or dict()
         for src, dst in connections:
+            if (src in self.nickname_to_name):
+                src = self.nickname_to_name[src]
+            if (dst in self.nickname_to_name):
+                dst = self.nickname_to_name[dst]
+            if (src == dst):
+                raise ValueError("Tried to make a line between equivalent src and dst")
+
             _make_line(src, dst, line_type, self.num_lines, params, transformer)
             self.num_lines += 1
 
@@ -172,6 +220,9 @@ class PyGridSim:
             None
         """
         altdss.Solution.Solve()
+
+    def _get_name_to_nickname(self):
+        return {v: k for k, v in self.nickname_to_name.items()}
 
     def results(self, queries: list[str], export_path=""):
         """Gets simulation results based on specified queries.
@@ -193,7 +244,7 @@ class PyGridSim:
         """
         results = {}
         for query in queries:
-            results[query] = _query_solution(query)
+            results[query] = _query_solution(query, self._get_name_to_nickname())
 
         if (export_path):
             _export_results(results, export_path)
