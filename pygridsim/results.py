@@ -6,6 +6,7 @@ import json
 
 from altdss import altdss
 
+
 def _query_solution(query, name_to_nickname):
     query_fix = query.lower().replace(" ", "")
     vector_losses = altdss.Losses()
